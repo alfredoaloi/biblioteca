@@ -38,4 +38,35 @@ public class DatabaseConnection {
 		ResultSet rs = pstmt.executeQuery();
 		return rs;
 	}
+	
+	public ResultSet getUsersNumBooksGroupedByStatus() throws SQLException
+	{
+		String sql = "SELECT User_ID, Num_green_books, Num_yellow_books, Num_red_books, Num_black_books\r\n" + 
+					 "FROM Books" + 
+					 "NATURAL JOIN (SELECT User_ID, COUNT(*) AS Num_green_books FROM Books WHERE Deadline_status = 'GREEN' GROUP BY Deadline_status)" + 
+					 "NATURAL JOIN (SELECT User_ID, COUNT(*) AS Num_yellow_books FROM Books WHERE Deadline_status = 'YELLOW' GROUP BY Deadline_status)" + 
+					 "NATURAL JOIN (SELECT User_ID, COUNT(*) AS Num_red_books FROM Books WHERE Deadline_status = 'RED' GROUP BY Deadline_status)" + 
+					 "NATURAL JOIN (SELECT User_ID, COUNT(*) AS Num_black_books FROM Books WHERE Deadline_status = 'BLACK' GROUP BY Deadline_status)" + 
+					 "GROUP BY User_ID;";
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		return rs;
+	}
+	
+	public ResultSet getUserIDWithEmail() throws SQLException
+	{
+		String sql = "SELECT Username, E_mail FROM User_Account;";
+		Statement stmt = conn.createStatement();
+		ResultSet rs = stmt.executeQuery(sql);
+		return rs;
+	}
+	
+	public ResultSet getUserDeadlineStatus(String username) throws SQLException
+	{
+		String sql = "SELECT User_deadline_status FROM User_Account WHERE Username = ?;";
+		PreparedStatement pstmt = conn.prepareStatement(sql);
+		pstmt.setString(1, username);
+		ResultSet rs = pstmt.executeQuery();
+		return rs;
+	}
 }
