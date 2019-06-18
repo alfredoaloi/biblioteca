@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane focusTraversable="true" prefHeight="437.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.UtenteRegistratoRicercaLibriController">
+   <children>
+      <SplitPane dividerPositions="0.25" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane maxWidth="200.0" minHeight="0.0" minWidth="200.0">
+               <children>
+                  <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffcc00;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+          <AnchorPane focusTraversable="true" minHeight="0.0" minWidth="0.0">
+               <children>
+                  <BorderPane focusTraversable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <top>
+                        <HBox alignment="CENTER" focusTraversable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-background-color: #ffcc00;" BorderPane.alignment="CENTER_LEFT">
+                           <children>
+                              <TextField fx:id="cercaTextField" alignment="CENTER_RIGHT" maxHeight="25.0" maxWidth="300.0" minHeight="25.0" minWidth="100.0" onKeyPressed="#cercaTextFieldKeyPressed" prefHeight="25.0" prefWidth="200.0" promptText="cerca un libro..." HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font size="10.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </HBox.margin>
+                              </TextField>
+                              <ImageView fx:id="cercaButton" fitHeight="20.0" fitWidth="100.0" layoutX="411.0" layoutY="13.0" onMouseReleased="#cercaButtonReleased" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../../risorse/cercaButton.png" />
+                                 </image>
+                                 <HBox.margin>
+                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                 </HBox.margin>
+                              </ImageView>
+                              <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="100.0" text="BIBLIOTECA" HBox.hgrow="ALWAYS">
+                                 <font>
+                                    <Font name="SansSerif Bold" size="14.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <MenuButton mnemonicParsing="false" text="=" textAlignment="CENTER">
+                                <items>
+                                  <MenuItem fx:id="profiloMenuItem" mnemonicParsing="false" onAction="#profiloPressed" text="Profilo" />
+                                  <MenuItem fx:id="libriNoleggiatiMenuItem" mnemonicParsing="false" onAction="#libriNoleggiatiPressed" text="Libri noleggiati" />
+                                    <MenuItem fx:id="esciMenuItem" mnemonicParsing="false" onAction="#esciPressed" text="Esci" />
+                                </items>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </MenuButton>
+                           </children>
+                        </HBox>
+                     </top>
+                     <center>
+                        <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
+                          <content>
+                            <AnchorPane>
+                                 <children>
+                                    <VBox style="-fx-background-color: #ffcc00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="100.0" style="-fx-background-color: #ffcc00;">
+                                             <children>
+                                                <ImageView fx:id="bookImg" pickOnBounds="true" preserveRatio="true" />
+                                                <VBox alignment="TOP_CENTER" spacing="20.0">
+                                                   <children>
+                                                      <Label fx:id="bookTitle" text="Clicca su un libro per vederne le informazioni!" textAlignment="CENTER" wrapText="true">
+                                                         <font>
+                                                            <Font name="SansSerif Bold" size="20.0" />
+                                                         </font></Label>
+                                                      <Label fx:id="bookISBN">
+                                                         <font>
+                                                            <Font name="SansSerif Regular" size="10.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="bookAuthor">
+                                                         <font>
+                                                            <Font name="SansSerif Regular" size="18.0" />
+                                                         </font></Label>
+                                                      <Label fx:id="bookPublisher">
+                                                         <font>
+                                                            <Font name="System Italic" size="14.0" />
+                                                         </font></Label>
+                                                      <Label fx:id="bookLang">
+                                                         <font>
+                                                            <Font name="SansSerif Regular" size="14.0" />
+                                                         </font></Label>
+                                                      <Label fx:id="bookPages">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font></Label>
+                                                   </children>
+                                                   <opaqueInsets>
+                                                      <Insets />
+                                                   </opaqueInsets>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </children>
+                                             <opaqueInsets>
+                                                <Insets />
+                                             </opaqueInsets>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </HBox>
+                                          <Label fx:id="bookDescr" wrapText="true" VBox.vgrow="ALWAYS">
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                             <font>
+                                                <Font name="SansSerif Regular" size="14.0" />
+                                             </font></Label>
+                                          <Label alignment="CENTER" layoutY="1000.0" text="Contattaci inviando una mail a biblioteca@chiocciola.it - Cosenza, Via della Biblioteca, 1" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </children></AnchorPane>
+                          </content>
+                        </ScrollPane>
+                     </center>
+                  </BorderPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>

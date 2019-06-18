@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import databaseSerialization.BookListJSONSerializer;
-
 
 public class ClientManger implements Runnable {
 
