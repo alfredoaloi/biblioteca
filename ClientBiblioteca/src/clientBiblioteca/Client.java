@@ -8,12 +8,12 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 
-public class Client implements Runnable{
-	
+public class Client implements Runnable {
+
 	private Socket socket = null;
 	private Gson gson;
 	private ArrayList<Category> categoryList;
-	
+
 	public Client() {
 		try {
 			this.socket = new Socket("localhost", 8000);
@@ -25,31 +25,29 @@ public class Client implements Runnable{
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void run() {
 		try {
-			if(socket == null)
+			if (socket == null)
 				return;
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			while (true) {
-				if(in.ready()) {
+				if (in.ready()) {
 					String inputLine = in.readLine();
-					if(inputLine.contains("ENDOFSTREAM"))
+					if (inputLine.contains("ENDOFSTREAM"))
 						return;
 					Category c = gson.fromJson(inputLine, Category.class);
 					System.out.println(c);
 					categoryList.add(c);
-				}								
+				}
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String[] args) {
-		@SuppressWarnings("unused")
-		Client c = new Client();
+	public ArrayList<Category> getCategoryList() {
+		return categoryList;
 	}
-	
 }

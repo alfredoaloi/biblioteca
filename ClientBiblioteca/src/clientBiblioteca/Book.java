@@ -9,8 +9,8 @@ public class Book {
 	private String description;
 	private int ISBN;
 	private int nBooks;
-	/*LE IMMAGINI MI RACCOMANDO*/
-	
+	/* LE IMMAGINI MI RACCOMANDO */
+
 	public Book(String title, String author, int nPages, String publisher, String language, String description,
 			int ISBN, int nBooks) {
 		super();
@@ -87,12 +87,10 @@ public class Book {
 	public void setnBooks(int nBooks) {
 		this.nBooks = nBooks;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "title:" + title + " author:" + author + " nPages:" + nPages + " publisher:" + publisher +
-				" language:" + language + " description: " + description + " ISBN: " + ISBN + " nBooks: "
-				+ nBooks;
+		return "title:" + title + " author:" + author + " nPages:" + nPages + " publisher:" + publisher + " language:"
+				+ language + " description: " + description + " ISBN: " + ISBN + " nBooks: " + nBooks;
 	}
 }
-
