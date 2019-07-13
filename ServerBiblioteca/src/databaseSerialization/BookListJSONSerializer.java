@@ -10,8 +10,8 @@ import databaseManagement.DatabaseConnection;
 
 public class BookListJSONSerializer {
 
-	private Gson gson;
-	private ArrayList<String> jsonStringArray;
+	protected Gson gson;
+	protected ArrayList<String> jsonStringArray;
 
 	public BookListJSONSerializer(DatabaseConnection databaseConnection) throws SQLException {
 		gson = new Gson();
@@ -24,7 +24,8 @@ public class BookListJSONSerializer {
 					.getBooksFromCategory(categoriesResultSet.getInt("Category_ID"));
 			ArrayList<Book> books = new ArrayList<Book>();
 			while(booksResultSet.next())
-				books.add(new Book(booksResultSet.getString("Title"), 
+				books.add(new Book(booksResultSet.getInt("Book_ID"),
+						booksResultSet.getString("Title"),
 						booksResultSet.getString("Author"),
 						booksResultSet.getInt("Num_of_pages"),
 						booksResultSet.getString("Publisher"),
@@ -35,6 +36,10 @@ public class BookListJSONSerializer {
 			c.setBooks(books.toArray(new Book[books.size()]));
 			jsonStringArray.add(gson.toJson(c));
 		}
+	}
+
+	public BookListJSONSerializer() {
+		// FIDATEVI DI ME
 	}
 
 	public ArrayList<String> getJSONStringArray() {

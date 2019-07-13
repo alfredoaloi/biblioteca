@@ -2,6 +2,7 @@ package application;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -28,7 +29,7 @@ public class SampleController {
 			avviaServerButton.setDisable(true);
 			terminaServerButton.setDisable(false);
 			logTextArea.appendText("Server avviato.\n");
-		} catch (IOException | SQLException e) {
+		} catch (IOException | SQLException | ParseException e) {
 			logTextArea.appendText("ERRORE: IMPOSSIBILE AVVIARE IL SERVER: " + e.getMessage() + "\n");
 		}
     }

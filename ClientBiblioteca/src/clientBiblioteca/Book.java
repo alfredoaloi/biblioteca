@@ -1,6 +1,7 @@
 package clientBiblioteca;
 
 public class Book {
+	private int bookID;
 	private String title;
 	private String author;
 	private int nPages;
@@ -11,9 +12,10 @@ public class Book {
 	private int nBooks;
 	/* LE IMMAGINI MI RACCOMANDO */
 
-	public Book(String title, String author, int nPages, String publisher, String language, String description,
+	public Book(int bookID, String title, String author, int nPages, String publisher, String language, String description,
 			int ISBN, int nBooks) {
 		super();
+		this.bookID = bookID;
 		this.title = title;
 		this.author = author;
 		this.nPages = nPages;
@@ -22,6 +24,14 @@ public class Book {
 		this.description = description;
 		this.ISBN = ISBN;
 		this.nBooks = nBooks;
+	}
+
+	public int getBookID() {
+		return bookID;
+	}
+
+	public void setBookID(int bookID) {
+		this.bookID = bookID;
 	}
 
 	public String getTitle() {

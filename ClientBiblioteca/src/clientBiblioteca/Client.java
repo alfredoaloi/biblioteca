@@ -1,8 +1,10 @@
 package clientBiblioteca;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -32,14 +34,25 @@ public class Client implements Runnable {
 			if (socket == null)
 				return;
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			PrintWriter out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
+			
+			out.append("ACCESS_CREDENTIALS" + "\n");
+			out.append(gson.toJson(new AccessCredentials("franc1", "bellecose")) + "\n");
+			out.flush();
+			
 			while (true) {
 				if (in.ready()) {
 					String inputLine = in.readLine();
 					if (inputLine.contains("ENDOFSTREAM"))
 						return;
-					Category c = gson.fromJson(inputLine, Category.class);
-					System.out.println(c);
-					categoryList.add(c);
+					else if (inputLine.contains("CUSTOMER")) {
+						System.out.println(in.readLine());
+					}
+					else {
+						Category c = gson.fromJson(inputLine, Category.class);
+						System.out.println(c);
+						categoryList.add(c);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -49,5 +62,9 @@ public class Client implements Runnable {
 	
 	public ArrayList<Category> getCategoryList() {
 		return categoryList;
+	}
+	
+	public static void main(String[] args) {
+		Client c = new Client();
 	}
 }

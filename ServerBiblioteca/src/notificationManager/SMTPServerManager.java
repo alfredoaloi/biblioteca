@@ -25,14 +25,14 @@ public class SMTPServerManager {
 		session = Session.getInstance(prop);
 	}
 	
-	public void sendEmail(String email) {
+	public void sendEmail(String email, String destination) {
 		try {
 
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress("francy4699@gmail.com","noreply@biblioteca.it"));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("francy4699@hotmail.com")
+                    InternetAddress.parse(destination)
             );
             message.setSubject("Notifica libri");
             message.setContent(email, "text/html");
@@ -43,21 +43,4 @@ public class SMTPServerManager {
             e.printStackTrace();
         }
     }
-	
-	/*public static void main(String[] args) {
-		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream("res"+ File.separator +"NotificationTemplate.html")));
-			SMTPServerManager mail = new SMTPServerManager();
-			String text = null;
-			while(in.ready()) {
-				if(text == null)
-					text = in.readLine();
-				text += in.readLine();
-			}
-			mail.sendEmail(text);
-			in.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
 }
