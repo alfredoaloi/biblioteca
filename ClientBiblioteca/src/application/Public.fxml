@@ -14,14 +14,14 @@
         <items>
           <AnchorPane maxWidth="200.0" minHeight="0.0" minWidth="200.0">
                <children>
-                  <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffcc00;" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
           <AnchorPane focusTraversable="true" minHeight="0.0" minWidth="0.0">
                <children>
                   <BorderPane focusTraversable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <top>
-                        <HBox alignment="CENTER" focusTraversable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-background-color: #ffcc00;" BorderPane.alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER" focusTraversable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" BorderPane.alignment="CENTER_LEFT">
                            <children>
                               <TextField fx:id="cercaTextField" alignment="CENTER_RIGHT" maxHeight="25.0" maxWidth="300.0" minHeight="25.0" minWidth="100.0" onKeyPressed="#cercaTextFieldKeyPressed" prefHeight="25.0" prefWidth="200.0" promptText="cerca un libro..." HBox.hgrow="ALWAYS">
                                  <font>
@@ -63,9 +63,9 @@
                           <content>
                             <AnchorPane focusTraversable="true">
                                  <children>
-                                    <VBox focusTraversable="true" style="-fx-background-color: #ffcc00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox focusTraversable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER_LEFT" focusTraversable="true" spacing="100.0" style="-fx-background-color: #ffcc00;">
+                                          <HBox alignment="CENTER" focusTraversable="true" spacing="100.0">
                                              <children>
                                                 <ImageView fx:id="bookImg" focusTraversable="true" pickOnBounds="true" preserveRatio="true" />
                                                 <VBox alignment="TOP_CENTER" focusTraversable="true" spacing="20.0">

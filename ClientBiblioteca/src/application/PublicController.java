@@ -30,48 +30,47 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.Pair;
 
-// background color = #ffcc00
-// button color = #
+// button color = #077807
 
 public class PublicController {
 
 	private Main main;
 
 	@FXML
-    private ImageView bookImg;
+	private ImageView bookImg;
 
-    @FXML
-    private Label bookPublisher;
+	@FXML
+	private Label bookPublisher;
 
-    @FXML
-    private TextField cercaTextField;
+	@FXML
+	private TextField cercaTextField;
 
-    @FXML
-    private Label bookDescr;
+	@FXML
+	private Label bookDescr;
 
-    @FXML
-    private ImageView loginButton;
+	@FXML
+	private ImageView loginButton;
 
-    @FXML
-    private Label bookISBN;
+	@FXML
+	private Label bookISBN;
 
-    @FXML
-    private Label bookAuthor;
+	@FXML
+	private Label bookAuthor;
 
-    @FXML
-    private ImageView cercaButton;
+	@FXML
+	private ImageView cercaButton;
 
-    @FXML
-    private TabPane tabPane;
+	@FXML
+	private TabPane tabPane;
 
-    @FXML
-    private Label bookTitle;
+	@FXML
+	private Label bookTitle;
 
-    @FXML
-    private Label bookLang;
+	@FXML
+	private Label bookLang;
 
-    @FXML
-    private Label bookPages;
+	@FXML
+	private Label bookPages;
 
 	private Client client;
 
@@ -80,6 +79,7 @@ public class PublicController {
 		client = m.client;
 	}
 
+	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -87,11 +87,13 @@ public class PublicController {
 		cercaLibro(cercaTextField.getText());
 	}
 
+	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
+	// premuto il bottone di Login
 	@FXML
 	void loginButtonReleased(MouseEvent event) {
 
@@ -161,6 +163,7 @@ public class PublicController {
 			return null;
 	}
 
+	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<Category> categorie = client.getCategoryList();
@@ -186,12 +189,12 @@ public class PublicController {
 		stampaCategorie(trovati);
 	}
 
+	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
 		if (categorie.isEmpty()) {
 			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
-		}
-		else {
+		} else {
 			bookTitle.setText("Clicca su un libro per vederne le informazioni");
 			bookImg.setImage(null); // manca un metodo getImg() in Book;
 			bookISBN.setText(null);
@@ -221,21 +224,23 @@ public class PublicController {
 			tabPane.getTabs().add(tab);
 		}
 	}
-	
+
+	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		bookTitle.setText(book.getTitle());
 		bookImg.setImage(null); // manca un metodo getImg() in Book;
-		bookISBN.setText(book.getISBN() + "");
+		bookISBN.setText("ISBN: " + book.getISBN());
 		bookAuthor.setText(book.getAuthor());
 		bookPublisher.setText(book.getPublisher());
 		bookLang.setText(book.getLanguage());
-		bookPages.setText(book.getnPages() + "");
+		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
 	}
 
+	// inizializza la scena
 	public void init() {
-		String text = "Clicca su un libro per le informazioni";
-		bookTitle.setText(text);
+		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
+		cercaTextField.setText("");
 	}
 }
