@@ -10,10 +10,10 @@ public class Book {
 	private String description;
 	private int ISBN;
 	private int nBooks;
-	/* LE IMMAGINI MI RACCOMANDO */
-
+	private String image;
+	
 	public Book(int bookID, String title, String author, int nPages, String publisher, String language, String description,
-			int ISBN, int nBooks) {
+			int ISBN, int nBooks, String image) {
 		super();
 		this.bookID = bookID;
 		this.title = title;
@@ -24,7 +24,9 @@ public class Book {
 		this.description = description;
 		this.ISBN = ISBN;
 		this.nBooks = nBooks;
+		this.image = image;
 	}
+
 
 	public int getBookID() {
 		return bookID;
@@ -97,10 +99,12 @@ public class Book {
 	public void setnBooks(int nBooks) {
 		this.nBooks = nBooks;
 	}
-
-	@Override
-	public String toString() {
-		return "title:" + title + " author:" + author + " nPages:" + nPages + " publisher:" + publisher + " language:"
-				+ language + " description: " + description + " ISBN: " + ISBN + " nBooks: " + nBooks;
+	
+	public String getImage() {
+		return image;
+	}
+	
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

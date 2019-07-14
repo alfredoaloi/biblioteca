@@ -3,7 +3,6 @@ package application;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -15,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import databaseManagement.DatabaseConnection;
 import databaseSerialization.BookListJSONSerializer;
+import databaseSerialization.ImageListSerializer;
 import databaseSerialization.UserListJSONSerializer;
 import notificationManager.NotificationManager;
 public class ServerConnection implements Runnable{
@@ -26,6 +26,7 @@ public class ServerConnection implements Runnable{
     private DatabaseConnection databaseConnection;
 	private BookListJSONSerializer bookListSerializer;
     private UserListJSONSerializer userListSerializer;
+    private ImageListSerializer imagelistSerializer;
     
     public ServerConnection(int port) throws IOException, SQLException, ParseException {
 		this.server = new ServerSocket(port);
@@ -34,9 +35,11 @@ public class ServerConnection implements Runnable{
 		this.databaseConnection = new DatabaseConnection();
 		this.bookListSerializer = new BookListJSONSerializer(databaseConnection);
 		this.userListSerializer = new UserListJSONSerializer(databaseConnection);
+		this.imagelistSerializer = new ImageListSerializer(databaseConnection);
 		System.out.println(bookListSerializer.getJSONStringArray());
 		System.out.println(userListSerializer.getJSONCustomerArray());
 		System.out.println(userListSerializer.getJSONEmployeeArray());
+		System.out.println(imagelistSerializer.getStringArray());
 		
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		Date scheduledDate = dateFormat.parse(databaseConnection.getNextScheduledDeadlineCheck().getString(1));
@@ -76,6 +79,10 @@ public class ServerConnection implements Runnable{
 		return this.userListSerializer;
 	}
 	
+	public ImageListSerializer getImageListSerializer() {
+		return this.imagelistSerializer;
+	}
+	
 	public void refreshBookList() throws SQLException {
 		this.bookListSerializer = new BookListJSONSerializer(databaseConnection);
 	}
@@ -84,7 +91,12 @@ public class ServerConnection implements Runnable{
 		this.userListSerializer = new UserListJSONSerializer(databaseConnection);
 	}
 	
+	public void refreshImageList() throws SQLException {
+		this.imagelistSerializer = new ImageListSerializer(databaseConnection);
+	}
+	
     public DatabaseConnection getDatabaseConnection() {
 		return databaseConnection;
 	}
+    
 }

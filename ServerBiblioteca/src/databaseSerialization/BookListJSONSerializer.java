@@ -32,14 +32,18 @@ public class BookListJSONSerializer {
 						booksResultSet.getString("Language"),
 						booksResultSet.getString("Description"),
 						booksResultSet.getInt("ISBN"),
-						booksResultSet.getInt("Num_of_books")));
+						booksResultSet.getInt("Num_of_books"),
+						booksResultSet.getString("Image"),
+						booksResultSet.getInt("Lending_period"),
+						booksResultSet.getInt("Fine_increment")));
 			c.setBooks(books.toArray(new Book[books.size()]));
 			jsonStringArray.add(gson.toJson(c));
 		}
 	}
 
 	public BookListJSONSerializer() {
-		// FIDATEVI DI ME
+		gson = new Gson();
+		jsonStringArray = new ArrayList<String>();
 	}
 
 	public ArrayList<String> getJSONStringArray() {

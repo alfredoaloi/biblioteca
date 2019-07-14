@@ -92,8 +92,8 @@ public class DatabaseConnection {
 	}
 	
 	public void insertNewBook(Book book, int categoryID, String userID) throws SQLException {
-		String insert = "INSERT INTO Books(Title, Author, Category_ID, Num_of_pages, Publisher, Language, Description, ISBN) " + 
-						"VALUES(?, ?, ?, ?, ?, ?, ?, ?);";
+		String insert = "INSERT INTO Books(Title, Author, Category_ID, Num_of_pages, Publisher, Language, Description, ISBN, Lending_period, Fine_increment) " + 
+						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		String log 	  = "INSERT INTO Log (User_ID, Book_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
 		
 		PreparedStatement pstmtInsert = conn.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
@@ -109,6 +109,8 @@ public class DatabaseConnection {
 		pstmtInsert.setString(6, book.getLanguage());
 		pstmtInsert.setString(7, book.getDescription());
 		pstmtInsert.setInt(8, book.getISBN());
+		pstmtInsert.setInt(9, book.getLendingPeriod());
+		pstmtInsert.setInt(10, book.getFineIncrement());
 		pstmtInsert.executeUpdate();
 		
 		ResultSet rs = pstmtInsert.getGeneratedKeys();
@@ -126,10 +128,10 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void updateBook(Book book, int categoryID, String userID) throws SQLException {
+	public void updateBook(int bookID ,Book book, int categoryID, String userID) throws SQLException {
 		String update = "UPDATE Books " + 
 						"SET Title = ?, Author = ?, Category_ID = ?, Num_of_pages = ?, Publisher = ?," + 
-						"Language = ?, Description = ?, ISBN = ? " +
+						"Language = ?, Description = ?, ISBN = ?, Image = ?, Lending_period = ?, Fine_increment = ?" +
 						"WHERE Book_ID = ?;";
 		String log 	  = "INSERT INTO Log (User_ID, Book_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'UPDATE');";
 		
@@ -146,7 +148,10 @@ public class DatabaseConnection {
 		pstmtUpdate.setString(6, book.getLanguage());
 		pstmtUpdate.setString(7, book.getDescription());
 		pstmtUpdate.setInt(8, book.getISBN());
-		pstmtUpdate.setInt(9, book.getBookID());
+		pstmtUpdate.setString(9, book.getImage());
+		pstmtUpdate.setInt(10, book.getLendingPeriod());
+		pstmtUpdate.setInt(11, book.getFineIncrement());
+		pstmtUpdate.setInt(12, bookID);
 		int rowsAffected = pstmtUpdate.executeUpdate();
 		
 		if(rowsAffected != 1)
@@ -160,24 +165,34 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void deleteBook(int bookID, String userID) throws SQLException {
+	public void deleteBook(int ISBN, String userID) throws SQLException {
 		String delete = "DELETE FROM Books " + 
 						"WHERE Book_ID = ? ;";
+		
 		String log 	  = "INSERT INTO Log (User_ID, Book_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'DELETE');";
+		
+		String idFirtsBook = "SELECT Book_ID " +
+							 "FROM Books " +
+							 "WHERE User_ID IS NULL AND ISBN = ?" + 
+							 "GROUP BY ISBN;";
 		
 		PreparedStatement pstmtDelete = conn.prepareStatement(delete);
 		PreparedStatement pstmtLog = conn.prepareStatement(log);
+		PreparedStatement pstmtIDFirstBook = conn.prepareStatement(idFirtsBook);
 		
 		conn.setAutoCommit(false);
 		
-		pstmtDelete.setInt(1, bookID);
+		pstmtIDFirstBook.setInt(1, ISBN);
+		ResultSet idFirstBookResultSet = pstmtIDFirstBook.executeQuery();
+		
+		pstmtDelete.setInt(1, idFirstBookResultSet.getInt(1));
 		int rowsAffected = pstmtDelete.executeUpdate();
 		
 		if(rowsAffected != 1)
 			conn.rollback();
 		
 		pstmtLog.setString(1, userID);
-		pstmtLog.setInt(2, bookID);
+		pstmtLog.setInt(2, idFirstBookResultSet.getInt(1));
 		pstmtLog.executeUpdate();
 		
 		conn.commit();
@@ -284,17 +299,26 @@ public class DatabaseConnection {
 		return rs;
 	}
 	
-	public void updateCustomerLentBook(int bookID, String username, String deadlineDate) throws SQLException {
+	public void updateCustomerLentBook(int ISBN, String username, String deadlineDate) throws SQLException {
+		String idFirtsBook = "SELECT Book_ID " +
+							 "FROM Books " +
+							 "WHERE User_ID IS NULL AND ISBN = ?" + 
+							 "GROUP BY ISBN;";
+		
 		String userLentBook = "UPDATE Books " +
 							  "SET User_ID = ?, Collection_date = DATE('now'), Deadline_status = 'GREEN', Deadline_date = DATE(?) " +
 							  "WHERE Book_ID = ?;";
+		
+		PreparedStatement pstmtIDFirstBook = conn.prepareStatement(idFirtsBook);
 		PreparedStatement pstmtUserLentBook = conn.prepareStatement(userLentBook);
 		
 		conn.setAutoCommit(false);
+		pstmtIDFirstBook.setInt(1, ISBN);
+		ResultSet idFirstBookResultSet = pstmtIDFirstBook.executeQuery();
 		
 		pstmtUserLentBook.setString(1, username);
 		pstmtUserLentBook.setString(2, deadlineDate);
-		pstmtUserLentBook.setInt(3, bookID);
+		pstmtUserLentBook.setInt(3, idFirstBookResultSet.getInt(1));
 		int rowsAffected = pstmtUserLentBook.executeUpdate();
 		
 		if(rowsAffected != 1)
@@ -444,5 +468,24 @@ public class DatabaseConnection {
 		
 		conn.commit();
 		conn.setAutoCommit(true);
+	}
+	
+	public ResultSet getBooksImages() throws SQLException {
+		String booksImages = "SELECT DISTINCT Image FROM Books;";
+		Statement stmtNextCheck = conn.createStatement();
+		
+		ResultSet rs = stmtNextCheck.executeQuery(booksImages);
+		return rs;
+	}
+	
+	public ResultSet getBooksIDFromISBN(int ISBN) throws SQLException {
+		String customerMailInformation = "SELECT Book_ID " + 
+										 "FROM Books " + 
+										 "WHERE ISBN = ?;";
+		PreparedStatement pstmtCustomerMailInformation = conn.prepareStatement(customerMailInformation);
+		
+		pstmtCustomerMailInformation.setInt(1, ISBN);
+		ResultSet rs = pstmtCustomerMailInformation.executeQuery();
+		return rs;
 	}
 }

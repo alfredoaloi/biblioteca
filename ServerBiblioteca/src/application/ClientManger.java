@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,18 +19,24 @@ import databaseSerialization.Book;
 import databaseSerialization.BookDeadlineDateIDContainer;
 import databaseSerialization.User;
 import databaseSerialization.UserLentBooksJSONSerializer;
+import imageSender.ImageSender;
 
 public class ClientManger implements Runnable {
 
 	private Socket socket;
+	private ServerSocket tmp;
 	private ServerConnection serverConnection;
 	private Gson gson;
 	private String employeeUsername;
+	private ImageSender imageSender;
 
 	public ClientManger(Socket socket, ServerConnection serverConnection) throws IOException {
 		this.socket = socket;
+		this.tmp = new ServerSocket(8001);
 		this.serverConnection = serverConnection;
 		this.gson = new Gson();
+		Socket s = tmp.accept();
+		this.imageSender = new ImageSender("res", s, serverConnection.getImageListSerializer().getStringArray());
 	}
 
 	@Override
@@ -42,8 +49,18 @@ public class ClientManger implements Runnable {
 				out.append(string + "\n");
 				out.flush();
 			}
+			out.append("ENDOFSTREAM 1" + "\n");
+			out.flush();
+			
+			for(String string : serverConnection.getImageListSerializer().getStringArray()) {
+				out.append(string + "\n");
+				out.flush();
+			}
 			out.append("ENDOFSTREAM" + "\n");
 			out.flush();
+			
+			imageSender.sendImagesToClient();
+			tmp.close();
 			
 			while(true) {
 				if(in.ready()) {
@@ -91,14 +108,17 @@ public class ClientManger implements Runnable {
 					else if(s.contains("UPDATE_BOOK")) {
 						Book book = gson.fromJson(in.readLine(), Book.class);
 						DatabaseConnection db = serverConnection.getDatabaseConnection();
-						ResultSet categoryIDRS = db.getCategoryIDFromName(in.readLine());
-						db.updateBook(book, categoryIDRS.getInt(1), employeeUsername);
+						ResultSet categoryIDResultSet = db.getCategoryIDFromName(in.readLine());
+						ResultSet booksIDISBNResultSet = db.getBooksIDFromISBN(book.getISBN());
+						while(booksIDISBNResultSet.next()) {
+							db.updateBook(booksIDISBNResultSet.getInt(1), book, categoryIDResultSet.getInt(1), employeeUsername);
+						}
 						serverConnection.refreshBookList();
 					}
 					else if(s.contains("DELETE_BOOK")) {
-						int bookID = Integer.parseInt(in.readLine());
+						Book book = gson.fromJson(in.readLine(), Book.class);
 						DatabaseConnection db = serverConnection.getDatabaseConnection();
-						db.deleteBook(bookID, employeeUsername);
+						db.deleteBook(book.getISBN(), employeeUsername);
 						serverConnection.refreshBookList();
 					}
 					else if(s.contains("GET_CUSTOMER_LIST")) {

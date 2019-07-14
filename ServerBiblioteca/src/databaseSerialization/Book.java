@@ -10,10 +10,12 @@ public class Book {
 	private String description;
 	private int ISBN;
 	private int nBooks;
-	/*LE IMMAGINI MI RACCOMANDO*/
-	
-	public Book(int bookID, String title, String author, int nPages, String publisher, String language, String description,
-			int ISBN, int nBooks) {
+	private String image;
+	private int lendingPeriod;
+	private int fineIncrement;
+
+	public Book(int bookID, String title, String author, int nPages, String publisher, String language,
+			String description, int iSBN, int nBooks, String image, int lendingPeriod, int fineIncrement) {
 		super();
 		this.bookID = bookID;
 		this.title = title;
@@ -22,9 +24,13 @@ public class Book {
 		this.publisher = publisher;
 		this.language = language;
 		this.description = description;
-		this.ISBN = ISBN;
+		ISBN = iSBN;
 		this.nBooks = nBooks;
+		this.image = image;
+		this.lendingPeriod = lendingPeriod;
+		this.fineIncrement = fineIncrement;
 	}
+
 
 	public int getBookID() {
 		return bookID;
@@ -97,4 +103,32 @@ public class Book {
 	public void setnBooks(int nBooks) {
 		this.nBooks = nBooks;
 	}
+	
+	public String getImage() {
+		return image;
+	}
+	
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
+	public int getLendingPeriod() {
+		return lendingPeriod;
+	}
+
+
+	public void setLendingPeriod(int lendingPeriod) {
+		this.lendingPeriod = lendingPeriod;
+	}
+
+
+	public int getFineIncrement() {
+		return fineIncrement;
+	}
+
+
+	public void setFineIncrement(int fineIncrement) {
+		this.fineIncrement = fineIncrement;
+	}
+
 }

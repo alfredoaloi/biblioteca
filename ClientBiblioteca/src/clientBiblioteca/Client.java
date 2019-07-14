@@ -10,17 +10,21 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 
+import imageReceiver.ImageReceiver;
+
 public class Client implements Runnable {
 
 	private Socket socket = null;
 	private Gson gson;
 	private ArrayList<Category> categoryList;
+	private ImageReceiver imageReceiver;
 
 	public Client() {
 		try {
 			this.socket = new Socket("localhost", 8000);
 			this.gson = new Gson();
 			this.categoryList = new ArrayList<Category>();
+			this.imageReceiver = new ImageReceiver("images", new Socket("localhost", 8001));
 			Thread t = new Thread(this);
 			t.start();
 		} catch (IOException e) {
@@ -43,8 +47,17 @@ public class Client implements Runnable {
 			while (true) {
 				if (in.ready()) {
 					String inputLine = in.readLine();
-					if (inputLine.contains("ENDOFSTREAM"))
+					if (inputLine.equals("ENDOFSTREAM 1")) {
+						ArrayList<String> al = new ArrayList<String>();
+						inputLine = in.readLine();
+						while(!inputLine.equals("ENDOFSTREAM")) {
+							al.add(inputLine);
+							inputLine = in.readLine();
+						}
+						System.out.println(al);
+						imageReceiver.receiveImagesFromServer(al);
 						return;
+					}
 					else if (inputLine.contains("CUSTOMER")) {
 						System.out.println(in.readLine());
 					}

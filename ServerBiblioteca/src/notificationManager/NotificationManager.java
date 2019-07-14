@@ -105,13 +105,5 @@ public class NotificationManager implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-	/*public static void main(String[] args) {
-		try {
-			NotificationManager tmp = new NotificationManager();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}*/
 
 }
