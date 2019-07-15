@@ -41,7 +41,8 @@ public class DeadlineManager {
 			
 			if(d.ordinal() == DeadlineStatus.BLACK.ordinal()) {
 				databaseConnection.setBookFine(booksInformationResultSet.getInt("Book_ID"), 
-											   booksInformationResultSet.getInt("Fine") + 10);		
+											   booksInformationResultSet.getInt("Fine") + 
+											   booksInformationResultSet.getInt("Fine_increment"));		
 			}
 			
 			else {
@@ -53,7 +54,8 @@ public class DeadlineManager {
 						   && remainingDays <= DeadlineStatus.values()[i].getUpperLimit())
 						{
 							if(DeadlineStatus.values()[i].ordinal() == DeadlineStatus.BLACK.ordinal())
-								databaseConnection.setBookFine(booksInformationResultSet.getInt("Book_ID"), 10);
+								databaseConnection.setBookFine(booksInformationResultSet.getInt("Book_ID"), 
+															   booksInformationResultSet.getInt("Fine_increment"));
 							d = DeadlineStatus.values()[i];
 							break;
 						}

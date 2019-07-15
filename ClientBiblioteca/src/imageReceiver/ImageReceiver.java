@@ -27,11 +27,11 @@ public class ImageReceiver {
 		this.socket = socket;
 	}
 	
-	public void receiveImagesFromServer(ArrayList<String> al) throws IOException{
+	public void receiveImagesFromServer(String[] im) throws IOException{
 		InputStream inputStream = socket.getInputStream();
 		PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
 		
-		for(String string : al) {
+		for(String string : im) {
 			byte[] sizeAr = new byte[4];
 			
 	        inputStream.read(sizeAr);

@@ -20,7 +20,9 @@ import notificationManager.NotificationManager;
 public class ServerConnection implements Runnable{
 
     private Socket socket;
+    private Socket imageSocket;
     private ServerSocket server;
+    private ServerSocket imageServerSocket;
     private Thread t;
     private boolean notClosed = true;
     private DatabaseConnection databaseConnection;
@@ -30,6 +32,7 @@ public class ServerConnection implements Runnable{
     
     public ServerConnection(int port) throws IOException, SQLException, ParseException {
 		this.server = new ServerSocket(port);
+		this.imageServerSocket = new ServerSocket(port + 1);
 		this.t = new Thread(this);
 		this.t.start();
 		this.databaseConnection = new DatabaseConnection();
@@ -61,7 +64,8 @@ public class ServerConnection implements Runnable{
 		while(notClosed) {
 			try {
 				socket = server.accept();
-				ClientManger cm = new ClientManger(socket, this);
+				imageSocket = imageServerSocket.accept();
+				ClientManger cm = new ClientManger(socket, imageSocket, this);
 				Thread ct = new Thread(cm);
 				ct.start();
 				System.out.println("Client Connesso");

@@ -46,7 +46,7 @@ public class BookListJSONSerializer {
 		jsonStringArray = new ArrayList<String>();
 	}
 
-	public ArrayList<String> getJSONStringArray() {
-		return jsonStringArray;
+	public String[] getJSONStringArray() {
+		return jsonStringArray.toArray(new String[jsonStringArray.size()]);
 	}
 }

@@ -11,6 +11,7 @@ import java.util.Date;
 
 import databaseSerialization.Book;
 import databaseSerialization.User;
+import statusReport.Failure;
 
 public class DatabaseConnection {
 	
@@ -91,7 +92,7 @@ public class DatabaseConnection {
 		return rs;
 	}
 	
-	public void insertNewBook(Book book, int categoryID, String userID) throws SQLException {
+	public void insertNewBook(Book book, int categoryID, String userID) throws SQLException, Failure {
 		String insert = "INSERT INTO Books(Title, Author, Category_ID, Num_of_pages, Publisher, Language, Description, ISBN, Lending_period, Fine_increment) " + 
 						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		String log 	  = "INSERT INTO Log (User_ID, Book_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
@@ -117,8 +118,11 @@ public class DatabaseConnection {
 		int bookID = 0;
 		if(rs.next())
 			bookID = rs.getInt(1);
-		else
+		else {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Inserimento del libro non riuscito");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setInt(2, bookID);
@@ -128,7 +132,7 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void updateBook(int bookID ,Book book, int categoryID, String userID) throws SQLException {
+	public void updateBook(int bookID , Book book, int categoryID, String userID) throws SQLException, Failure {
 		String update = "UPDATE Books " + 
 						"SET Title = ?, Author = ?, Category_ID = ?, Num_of_pages = ?, Publisher = ?," + 
 						"Language = ?, Description = ?, ISBN = ?, Image = ?, Lending_period = ?, Fine_increment = ?" +
@@ -154,8 +158,11 @@ public class DatabaseConnection {
 		pstmtUpdate.setInt(12, bookID);
 		int rowsAffected = pstmtUpdate.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Aggiornamento del libro non riuscito");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setInt(2, book.getBookID());
@@ -165,7 +172,7 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void deleteBook(int ISBN, String userID) throws SQLException {
+	public void deleteBook(int ISBN, String userID) throws SQLException, Failure {
 		String delete = "DELETE FROM Books " + 
 						"WHERE Book_ID = ? ;";
 		
@@ -188,8 +195,11 @@ public class DatabaseConnection {
 		pstmtDelete.setInt(1, idFirstBookResultSet.getInt(1));
 		int rowsAffected = pstmtDelete.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Eliminazone del libro non riuscita");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setInt(2, idFirstBookResultSet.getInt(1));
@@ -199,7 +209,7 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void insertNewCustomer(User customer, String userID) throws SQLException {
+	public void insertNewCustomer(User customer, String userID) throws SQLException, Failure {
 		String insert = "INSERT INTO Customer_Account " + 
 						"VALUES(?, ?, ?, ?, ?, 'GREEN', 0);";
 		String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
@@ -216,8 +226,11 @@ public class DatabaseConnection {
 		pstmtInsert.setString(5, customer.getE_mail());
 		int rowsAffected = pstmtInsert.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Inserimento dell'utente non riuscito");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setString(2, customer.getUsername());
@@ -227,7 +240,7 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void updateCustomer(User customer, String userID) throws SQLException {
+	public void updateCustomer(User customer, String userID) throws SQLException, Failure {
 		String update = "UPDATE Customer_Account " +
 						"SET Username = ?, Password = ?, Name = ?, Surname = ?, E_Mail = ? " +
 						"WHERE Username = ?;";
@@ -246,8 +259,11 @@ public class DatabaseConnection {
 		pstmtUpdate.setString(6, customer.getUsername());
 		int rowsAffected = pstmtUpdate.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Aggiornamento dell'utente non riuscito");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setString(2, customer.getUsername());
@@ -257,7 +273,7 @@ public class DatabaseConnection {
 		conn.setAutoCommit(true);
 	}
 	
-	public void deleteCustomer(String CustomerID, String userID) throws SQLException {
+	public void deleteCustomer(String CustomerID, String userID) throws SQLException, Failure {
 		String delete = "DELETE FROM Customer_Account " + 
 						"WHERE Username = ?;";
 		String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'DELETE');";
@@ -270,8 +286,11 @@ public class DatabaseConnection {
 		pstmtDelete.setString(1, CustomerID);
 		int rowsAffected = pstmtDelete.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Eliminazione dell'utente non riuscita");
+		}
 		
 		pstmtLog.setString(1, userID);
 		pstmtLog.setString(2, CustomerID);
@@ -299,7 +318,7 @@ public class DatabaseConnection {
 		return rs;
 	}
 	
-	public void updateCustomerLentBook(int ISBN, String username, String deadlineDate) throws SQLException {
+	public void updateCustomerLentBook(int ISBN, String username, String deadlineDate) throws SQLException, Failure {
 		String idFirtsBook = "SELECT Book_ID " +
 							 "FROM Books " +
 							 "WHERE User_ID IS NULL AND ISBN = ?" + 
@@ -321,14 +340,17 @@ public class DatabaseConnection {
 		pstmtUserLentBook.setInt(3, idFirstBookResultSet.getInt(1));
 		int rowsAffected = pstmtUserLentBook.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Aggiornamento della lista di libri prestati all'utente non riuscito");
+		}
 		
 		conn.commit();
 		conn.setAutoCommit(true);
 	}
 	
-	public void updateCustomerReturnedBook(int bookID) throws SQLException {
+	public void updateCustomerReturnedBook(int bookID) throws SQLException, Failure {
 		String userReturnedBook = "UPDATE Books " +
 				  				  "SET User_ID = NULL, Collection_date = NULL, Deadline_status = NULL, Deadline_date = NULL, Fine = NULL " +
 				  				  "WHERE Book_ID = ?;";
@@ -338,8 +360,11 @@ public class DatabaseConnection {
 		pstmtUserReturnedBook.setInt(1, bookID);
 		int rowsAffected = pstmtUserReturnedBook.executeUpdate();
 		
-		if(rowsAffected != 1)
+		if(rowsAffected != 1) {
 			conn.rollback();
+			conn.setAutoCommit(true);
+			throw new Failure("Errore del database: Aggiornamento della lista di libri riportati dall'utente non riuscito");
+		}
 		
 		conn.commit();
 		conn.setAutoCommit(true);
@@ -422,8 +447,9 @@ public class DatabaseConnection {
 	}
 	
 	public ResultSet getBooksInformation() throws SQLException {
-		String booksInformation = "SELECT Book_ID, Deadline_status, (JULIANDAY(Deadline_date) - JULIANDAY(DATE('now'))) AS Remaining_days, Fine " + 
-								  "FROM Books;";
+		String booksInformation = "SELECT Book_ID, Deadline_status, (JULIANDAY(Deadline_date) - JULIANDAY(DATE('now'))) AS Remaining_days, Fine, Fine_increment " + 
+								  "FROM Books " + 
+								  "WHERE User_ID IS NOT NULL;";
 		Statement stmtBooksInformation = conn.createStatement();
 		ResultSet rs = stmtBooksInformation.executeQuery(booksInformation);
 		return rs;
@@ -440,15 +466,6 @@ public class DatabaseConnection {
 		conn.commit();
 		conn.setAutoCommit(true);
 	}
-	
-	/*public ResultSet getBookFine(int bookID) throws SQLException {
-		String bookFine = "SELECT Fine FROM Books WHERE Book_ID = ?;";
-		PreparedStatement pstmtFine = conn.prepareStatement(bookFine);
-		
-		pstmtFine.setInt(1, bookID);
-		ResultSet rs = pstmtFine.executeQuery();
-		return rs;
-	}*/
 	
 	public ResultSet getNextScheduledDeadlineCheck() throws SQLException {
 		String nextCheck = "SELECT DATE(Scheduled_date) FROM Next_Scheduled_Deadline_Check;";

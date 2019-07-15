@@ -18,12 +18,12 @@ public class ImageSender {
 	
 	private String imageFolderPath;
 	private Socket socket;
-	private ArrayList<String> imageList;
+	private String[] imageList;
 	
-	public ImageSender(String imageFolderPath, Socket socket, ArrayList<String> imageList) {
+	public ImageSender(String imageFolderPath, Socket socket, String[] strings) {
 		this.imageFolderPath = imageFolderPath;
 		this.socket = socket;
-		this.imageList = imageList;
+		this.imageList = strings;
 	}
 	
 	public void sendImagesToClient() throws IOException, SQLException {

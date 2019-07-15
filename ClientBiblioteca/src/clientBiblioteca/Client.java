@@ -7,9 +7,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import com.google.gson.Gson;
-
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import imageReceiver.ImageReceiver;
 
 public class Client implements Runnable {
@@ -22,7 +22,7 @@ public class Client implements Runnable {
 	public Client() {
 		try {
 			this.socket = new Socket("localhost", 8000);
-			this.gson = new Gson();
+			this.gson = new GsonBuilder().create();
 			this.categoryList = new ArrayList<Category>();
 			this.imageReceiver = new ImageReceiver("images", new Socket("localhost", 8001));
 			Thread t = new Thread(this);
@@ -40,34 +40,40 @@ public class Client implements Runnable {
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			PrintWriter out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
 			
-			out.append("ACCESS_CREDENTIALS" + "\n");
-			out.append(gson.toJson(new AccessCredentials("franc1", "bellecose")) + "\n");
-			out.flush();
-			
-			while (true) {
-				if (in.ready()) {
-					String inputLine = in.readLine();
-					if (inputLine.equals("ENDOFSTREAM 1")) {
-						ArrayList<String> al = new ArrayList<String>();
-						inputLine = in.readLine();
-						while(!inputLine.equals("ENDOFSTREAM")) {
-							al.add(inputLine);
-							inputLine = in.readLine();
-						}
-						System.out.println(al);
-						imageReceiver.receiveImagesFromServer(al);
-						return;
-					}
-					else if (inputLine.contains("CUSTOMER")) {
-						System.out.println(in.readLine());
-					}
-					else {
-						Category c = gson.fromJson(inputLine, Category.class);
-						System.out.println(c);
-						categoryList.add(c);
-					}
+			String s1 = in.readLine();
+			String s2 = in.readLine();
+			Envelope<String[]> envelope1 = new Envelope<String[]>();
+			Envelope<String[]> envelope2 = new Envelope<String[]>();
+			envelope1 = gson.fromJson(s1, new TypeToken<Envelope<String[]>>(){}.getType());
+			envelope2 = gson.fromJson(s2, new TypeToken<Envelope<String[]>>(){}.getType());
+			if(envelope1.getObject().equals("BOOK_LIST")) {
+				String[] cat = envelope1.getContent();
+				for(String c : cat) {
+					System.out.println(c);
+					categoryList.add(gson.fromJson(c, Category.class));
 				}
 			}
+			if(envelope2.getObject().equals("IMAGE_LIST")) {
+				String[] im = envelope2.getContent();
+				imageReceiver.receiveImagesFromServer(im);
+			}
+			
+			Envelope<AccessCredentials> envelope3 = new Envelope<AccessCredentials>();
+			envelope3.setObject("ACCESS_CREDENTIALS");
+			envelope3.setContent(new AccessCredentials("franc1", "bellecose"));
+			out.append(gson.toJson(envelope3) + "\n");
+			out.flush();
+			
+			Envelope<String> userCredentialsEnvelope = gson.fromJson(in.readLine(), new TypeToken<Envelope<String>>(){}.getType());
+			System.out.println(userCredentialsEnvelope.getContent());
+			
+			
+			Envelope<String> reportEnvelope = gson.fromJson(in.readLine(), new TypeToken<Envelope<String>>(){}.getType());
+			if(reportEnvelope.getObject().equals("SUCCESS"))
+				System.out.println("ok");
+			else
+				System.out.println(reportEnvelope.getContent());
+			return;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

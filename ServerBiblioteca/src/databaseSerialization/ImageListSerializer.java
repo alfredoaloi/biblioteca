@@ -8,20 +8,20 @@ import databaseManagement.DatabaseConnection;
 
 public class ImageListSerializer {
 	
-	protected ArrayList<String> StringArray;
+	protected ArrayList<String> stringArray;
 	
 	public ImageListSerializer(DatabaseConnection databaseConnection) throws SQLException {
-		StringArray = new ArrayList<String>();		
+		stringArray = new ArrayList<String>();		
 		ResultSet rs = databaseConnection.getBooksImages();
 		
 		while(rs.next()) {
-			StringArray.add(rs.getString("Image"));
+			stringArray.add(rs.getString("Image"));
 		}
 		
 	}
 	
-	public ArrayList<String> getStringArray() {
-		return StringArray;
+	public String[] getStringArray() {
+		return stringArray.toArray(new String[stringArray.size()]);
 	}
 	
 }
