@@ -11,9 +11,11 @@ public class Book {
 	private int ISBN;
 	private int nBooks;
 	private String image;
-	
-	public Book(int bookID, String title, String author, int nPages, String publisher, String language, String description,
-			int ISBN, int nBooks, String image) {
+	private int lendingPeriod;
+	private int fineIncrement;
+
+	public Book(int bookID, String title, String author, int nPages, String publisher, String language,
+			String description, int iSBN, int nBooks, String image, int lendingPeriod, int fineIncrement) {
 		super();
 		this.bookID = bookID;
 		this.title = title;
@@ -22,9 +24,11 @@ public class Book {
 		this.publisher = publisher;
 		this.language = language;
 		this.description = description;
-		this.ISBN = ISBN;
+		ISBN = iSBN;
 		this.nBooks = nBooks;
 		this.image = image;
+		this.lendingPeriod = lendingPeriod;
+		this.fineIncrement = fineIncrement;
 	}
 
 
@@ -107,4 +111,24 @@ public class Book {
 	public void setImage(String image) {
 		this.image = image;
 	}
+	
+	public int getLendingPeriod() {
+		return lendingPeriod;
+	}
+
+
+	public void setLendingPeriod(int lendingPeriod) {
+		this.lendingPeriod = lendingPeriod;
+	}
+
+
+	public int getFineIncrement() {
+		return fineIncrement;
+	}
+
+
+	public void setFineIncrement(int fineIncrement) {
+		this.fineIncrement = fineIncrement;
+	}
+
 }
