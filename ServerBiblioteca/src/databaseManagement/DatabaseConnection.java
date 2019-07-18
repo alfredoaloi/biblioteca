@@ -308,7 +308,7 @@ public class DatabaseConnection {
 	public void insertNewEmployee(User employee, String userID) throws Failure {
 		try {
 			String insert = "INSERT INTO Customer_Account " + 
-							"VALUES(?, ?, ?, ?, ?, 'GREEN', 0);";
+							"VALUES(?, ?, ?, ?, ?);";
 			String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
 			
 			PreparedStatement pstmtInsert = conn.prepareStatement(insert);
@@ -621,12 +621,12 @@ public class DatabaseConnection {
 		return rs;
 	}
 	
-	public static void main(String[] args) {
-		try {
-			DatabaseConnection db = new DatabaseConnection();
-			db.updateCustomerReturnedBook(9);
-		} catch (SQLException | Failure e) {
-			System.out.println(e.getMessage());
-		}
+	public void setNewCategory(String category) throws SQLException {
+		String newCategory = "INSERT INTO Category_types(Category) " + 
+							 "VALUES(?);";
+		PreparedStatement pstmtNewCategory = conn.prepareStatement(newCategory);
+
+		pstmtNewCategory.setString(1, category);
+		pstmtNewCategory.executeUpdate();
 	}
 }

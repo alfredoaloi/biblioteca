@@ -129,6 +129,10 @@ public class ClientManger implements Runnable {
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							for(Category category : categoryEnvelope.getContent()) {
 								ResultSet categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
+								if(!categoryIDResultSet.next()) {
+									//inserisci in database nuova categoria
+									categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
+								}
 								for(Book book : category.getBooks())
 									db.insertNewBook(book, categoryIDResultSet.getInt(1), employeeUsername);
 							}
@@ -140,6 +144,10 @@ public class ClientManger implements Runnable {
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							for(Category category : categoryEnvelope.getContent()) {
 								ResultSet categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
+								if(!categoryIDResultSet.next()) {
+									//inserisci in database nuova categoria
+									categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
+								}
 								for(Book book : category.getBooks()) {
 								ResultSet booksIDISBNResultSet = db.getBooksIDFromISBN(book.getISBN());
 									while(booksIDISBNResultSet.next()) {
