@@ -56,6 +56,7 @@ public class ServerConnection implements Runnable{
     public void close() throws IOException, SQLException {
     	this.notClosed = false;
     	this.server.close();
+    	this.imageServerSocket.close();
     	this.databaseConnection.close();
     }
     

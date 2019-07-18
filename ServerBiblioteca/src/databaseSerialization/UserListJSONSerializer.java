@@ -44,11 +44,11 @@ public class UserListJSONSerializer {
 		}		
 	}
 
-	public ArrayList<String> getJSONCustomerArray() {
-		return jsonCustomerArray;
+	public String[] getJSONCustomerArray() {
+		return jsonCustomerArray.toArray(new String[jsonCustomerArray.size()]);
 	}
 
-	public ArrayList<String> getJSONEmployeeArray() {
-		return jsonEmployeeArray;
+	public String[] getJSONEmployeeArray() {
+		return jsonEmployeeArray.toArray(new String[jsonEmployeeArray.size()]);
 	}
 }

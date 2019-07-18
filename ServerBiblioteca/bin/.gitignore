@@ -1,8 +1,6 @@
-/databaseManagement/
-/notificationManager/
 /application/
-/operationStatusReport/
 /statusReport/
-/envelopeManagement/
+/databaseManagement/
 /databaseSerialization/
 /imageSender/
+/notificationManager/

@@ -9,20 +9,15 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 public class ImageReceiver {
 	
-	private File imageFolder;
 	private String imageFolderPath;
-	private File[] imageFolderFileNames;
 	private Socket socket;
 	
 	public ImageReceiver(String imageFolderPath, Socket socket) {
-		this.imageFolder = new File(imageFolderPath);
-		this.imageFolderFileNames = imageFolder.listFiles();
 		this.imageFolderPath = imageFolderPath;
 		this.socket = socket;
 	}
@@ -48,6 +43,13 @@ public class ImageReceiver {
 		
 		pw.append("ack" + "\n");
 		pw.flush();
+	}
+	
+	public void clearImageFolder() {
+		File imageFolder = new File(imageFolderPath);
+		File[] imageFolderFileNames = imageFolder.listFiles();
+		for(File image : imageFolderFileNames)
+			image.delete();
 	}
 
 }

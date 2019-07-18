@@ -7,9 +7,13 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+
 import imageReceiver.ImageReceiver;
 
 public class Client implements Runnable {
@@ -64,15 +68,17 @@ public class Client implements Runnable {
 			out.append(gson.toJson(envelope3) + "\n");
 			out.flush();
 			
-			Envelope<String> userCredentialsEnvelope = gson.fromJson(in.readLine(), new TypeToken<Envelope<String>>(){}.getType());
-			System.out.println(userCredentialsEnvelope.getContent());
+			String input = in.readLine();
+			JsonObject jsonObject = new JsonParser().parse(input).getAsJsonObject();
 			
-			
-			Envelope<String> reportEnvelope = gson.fromJson(in.readLine(), new TypeToken<Envelope<String>>(){}.getType());
-			if(reportEnvelope.getObject().equals("SUCCESS"))
-				System.out.println("ok");
-			else
+			if(jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
 				System.out.println(reportEnvelope.getContent());
+			}
+			else {
+				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+				System.out.println(userCredentialsEnvelope.getContent());
+			}
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
