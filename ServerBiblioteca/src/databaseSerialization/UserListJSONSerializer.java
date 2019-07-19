@@ -28,8 +28,7 @@ public class UserListJSONSerializer {
 									  customerResultSet.getString("Name"), 
 									  customerResultSet.getString("Surname"), 
 									  customerResultSet.getString("E_Mail"), 
-									  customerResultSet.getString("User_deadline_status"), 
-									  customerResultSet.getInt("Expired_books"));
+									  customerResultSet.getString("User_deadline_status"));
 			jsonCustomerArray.add(gson.toJson(c));
 		}
 		
