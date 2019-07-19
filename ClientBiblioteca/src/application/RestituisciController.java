@@ -23,9 +23,12 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 
-public class UtenteRegistratoRicercaLibriController {
+public class RestituisciController {
 
 	private Main main;
+
+	@FXML
+	private ImageView restituisciButton;
 
 	@FXML
 	private ImageView bookImg;
@@ -52,13 +55,13 @@ public class UtenteRegistratoRicercaLibriController {
 	private Label bookPublisher;
 
 	@FXML
-	private MenuItem libriNoleggiatiMenuItem;
-
-	@FXML
 	private TextField cercaTextField;
 
 	@FXML
 	private Label bookDescr;
+
+	@FXML
+	private Label bookDueDate;
 
 	@FXML
 	private ImageView cercaButton;
@@ -69,7 +72,15 @@ public class UtenteRegistratoRicercaLibriController {
 	@FXML
 	private Label bookTitle;
 
+	@FXML
+	private MenuItem amministrazioneMenuItem;
+
+	@FXML
+	private MenuItem homeMenuItem;
+
 	private Client client;
+
+	private Book activeBook;
 
 	public void setMain(Main m) {
 		main = m;
@@ -154,6 +165,7 @@ public class UtenteRegistratoRicercaLibriController {
 
 	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
+		activeBook = book;
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
 		bookImg.setImage(new Image(file.toURI().toString()));
@@ -163,6 +175,8 @@ public class UtenteRegistratoRicercaLibriController {
 		bookLang.setText(book.getLanguage());
 		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
+		restituisciButton.setDisable(false);
+		restituisciButton.setVisible(true);
 	}
 
 	// inizializza la scena
@@ -170,18 +184,31 @@ public class UtenteRegistratoRicercaLibriController {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
 		cercaTextField.setText("");
+		restituisciButton.setVisible(false);
+		restituisciButton.setDisable(true);
 	}
 
-	// passa alla utenteRegistratoProfiloScene
+	@FXML
+	public void restituisciReleased(MouseEvent event) {
+		System.out.println(activeBook + " restituito");
+	}
+
+	// passa alla amministrazioneScene
+	@FXML
+	void amministrazionePressed(ActionEvent event) {
+		main.setAmministrazioneScene();
+	}
+
+	// passa alla
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		main.setUtenteRegistratoProfiloScene();
+		System.out.println("profilo commesso");
 	}
 
-	// passa alla utenteRegistratoLibriNoleggiatiScene
+	// passa alla commessoScene
 	@FXML
-	void libriNoleggiatiPressed(ActionEvent event) {
-		main.setUtenteRegistratoLibriNoleggiatiScene();
+	void homePressed(ActionEvent event) {
+		main.setCommessoScene(new ArrayList<Book>());
 	}
 
 	// passa alla publicScene

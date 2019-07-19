@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import clientBiblioteca.Book;
@@ -15,6 +16,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -124,14 +126,14 @@ public class UtenteRegistratoLibriNoleggiatiController {
 			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 		} else {
 			bookTitle.setText("Clicca su un libro per vederne le informazioni");
-			bookImg.setImage(null); // manca un metodo getImg() in Book;
-			bookISBN.setText(null);
-			bookAuthor.setText(null);
-			bookPublisher.setText(null);
-			bookLang.setText(null);
-			bookPages.setText(null);
-			bookDescr.setText(null);
 		}
+		bookImg.setImage(null); // manca un metodo getImg() in Book;
+		bookISBN.setText(null);
+		bookAuthor.setText(null);
+		bookPublisher.setText(null);
+		bookLang.setText(null);
+		bookPages.setText(null);
+		bookDescr.setText(null);
 		for (Category categoria : categorie) {
 			Tab tab = new Tab(categoria.getCategoryType());
 			VBox box = new VBox(10);
@@ -156,7 +158,8 @@ public class UtenteRegistratoLibriNoleggiatiController {
 	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		bookTitle.setText(book.getTitle());
-		bookImg.setImage(null); // manca un metodo getImg() in Book;
+		File file = new File("images" + File.separator + book.getImage());
+		bookImg.setImage(new Image(file.toURI().toString()));
 		bookISBN.setText("ISBN: " + book.getISBN());
 		bookAuthor.setText(book.getAuthor());
 		bookPublisher.setText(book.getPublisher());

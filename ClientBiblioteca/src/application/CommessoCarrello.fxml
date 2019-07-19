@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane focusTraversable="true" prefHeight="437.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.PublicController">
+<AnchorPane focusTraversable="true" prefHeight="437.0" prefWidth="670.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.CommessoCarrelloController">
    <children>
       <SplitPane dividerPositions="0.25" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
@@ -47,30 +47,49 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
                               </Label>
-                              <ImageView fx:id="loginButton" fitHeight="20.0" fitWidth="100.0" onMouseReleased="#loginButtonReleased" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fx:id="acquistaButton" fitHeight="20.0" onMouseReleased="#acquistaReleased" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../risorse/loginButton.png" />
+                                    <Image url="@../../risorse/acquista.png" />
                                  </image>
                                  <HBox.margin>
-                                    <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </HBox.margin>
                               </ImageView>
+                              <MenuButton mnemonicParsing="false" text="=" textAlignment="CENTER">
+                                <items>
+                                    <MenuItem fx:id="restituisciMenuItem" mnemonicParsing="false" onAction="#restituisciPressed" text="Restituisci libri" />
+                                    <MenuItem fx:id="amministrazioneMenuItem" mnemonicParsing="false" onAction="#amministrazionePressed" text="Amministrazione" />
+                                  <MenuItem fx:id="profiloMenuItem" mnemonicParsing="false" onAction="#profiloPressed" text="Profilo" />
+                                    <MenuItem fx:id="esciMenuItem" mnemonicParsing="false" onAction="#esciPressed" text="Esci" />
+                                </items>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </MenuButton>
                            </children>
                         </HBox>
                      </top>
                      <center>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
                           <content>
-                            <AnchorPane focusTraversable="true">
+                            <AnchorPane>
                                  <children>
-                                    <VBox focusTraversable="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER" focusTraversable="true" spacing="100.0">
+                                          <HBox alignment="CENTER" spacing="100.0">
                                              <children>
-                                                <ImageView fx:id="bookImg" focusTraversable="true" pickOnBounds="true" preserveRatio="true" />
-                                                <VBox alignment="TOP_CENTER" focusTraversable="true" spacing="20.0">
+                                                <ImageView fx:id="bookImg" pickOnBounds="true" preserveRatio="true" />
+                                                <VBox alignment="TOP_CENTER" spacing="20.0">
                                                    <children>
-                                                      <Label fx:id="bookTitle" text="ciao1" textAlignment="CENTER">
+                                                      <ImageView fx:id="aggiungiAltriButton" fitHeight="20.0" fitWidth="200.0" onMouseReleased="#aggiungiAltriReleased" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../risorse/aggiungiAltri.png" />
+                                                         </image>
+                                                         <VBox.margin>
+                                                            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </ImageView>
+                                                      <Label fx:id="bookTitle" text="Clicca su un libro per vederne le informazioni!" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="SansSerif Bold" size="20.0" />
                                                          </font></Label>
@@ -93,8 +112,14 @@
                                                          </font></Label>
                                                       <Label fx:id="bookPages">
                                                          <font>
-                                                            <Font name="Ubuntu" size="12.0" />
-                                                         </font></Label>
+                                                            <Font name="SansSerif Regular" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <ImageView fx:id="removeCartButton" fitHeight="20.0" fitWidth="200.0" onMouseReleased="#removeCartReleased" pickOnBounds="true" preserveRatio="true">
+                                                         <image>
+                                                            <Image url="@../../risorse/removeCartButton.png" />
+                                                         </image>
+                                                      </ImageView>
                                                    </children>
                                                    <opaqueInsets>
                                                       <Insets />
@@ -111,13 +136,22 @@
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </HBox>
-                                          <Label fx:id="bookDescr" text="Descrizione" wrapText="true" VBox.vgrow="ALWAYS">
+                                          <Label fx:id="bookDescr" wrapText="true" VBox.vgrow="ALWAYS">
                                              <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                              <font>
                                                 <Font name="SansSerif Regular" size="14.0" />
                                              </font></Label>
+                                          <Label fx:id="bookDueDate" />
+                                          <Label alignment="CENTER" layoutY="1000.0" text="Contattaci inviando una mail a biblioteca@chiocciola.it - Cosenza, Via della Biblioteca, 1" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </VBox.margin>
+                                          </Label>
                                        </children>
                                     </VBox>
                                  </children></AnchorPane>

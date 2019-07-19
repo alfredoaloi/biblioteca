@@ -1,1 +1,7 @@
+/application/
+/databaseManagement/
 /databaseSerialization/
+/envelopeManagement/
+/imageSender/
+/notificationManager/
+/statusReport/
