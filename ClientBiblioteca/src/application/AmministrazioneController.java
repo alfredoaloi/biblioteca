@@ -480,6 +480,7 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
+	// alert di info
 	private void delConfermata() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Eliminato");

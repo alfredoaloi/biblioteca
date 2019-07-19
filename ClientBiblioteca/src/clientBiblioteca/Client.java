@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import imageReceiver.ImageReceiver;
+import javafx.util.Pair;
 
 public class Client implements Runnable {
 
@@ -22,6 +23,8 @@ public class Client implements Runnable {
 	private Gson gson;
 	private ArrayList<Category> categoryList;
 	private ImageReceiver imageReceiver;
+	private BufferedReader in;
+	private PrintWriter out;
 
 	public Client() {
 		try {
@@ -29,6 +32,8 @@ public class Client implements Runnable {
 			this.gson = new GsonBuilder().create();
 			this.categoryList = new ArrayList<Category>();
 			this.imageReceiver = new ImageReceiver("images", new Socket("localhost", 8001));
+			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
 			Thread t = new Thread(this);
 			t.start();
 		} catch (IOException e) {
@@ -41,42 +46,43 @@ public class Client implements Runnable {
 		try {
 			if (socket == null)
 				return;
-			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			PrintWriter out = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()), true);
-			
+
 			String s1 = in.readLine();
 			String s2 = in.readLine();
 			Envelope<String[]> envelope1 = new Envelope<String[]>();
 			Envelope<String[]> envelope2 = new Envelope<String[]>();
-			envelope1 = gson.fromJson(s1, new TypeToken<Envelope<String[]>>(){}.getType());
-			envelope2 = gson.fromJson(s2, new TypeToken<Envelope<String[]>>(){}.getType());
-			if(envelope1.getObject().equals("BOOK_LIST")) {
+			envelope1 = gson.fromJson(s1, new TypeToken<Envelope<String[]>>() {
+			}.getType());
+			envelope2 = gson.fromJson(s2, new TypeToken<Envelope<String[]>>() {
+			}.getType());
+			if (envelope1.getObject().equals("BOOK_LIST")) {
 				String[] cat = envelope1.getContent();
-				for(String c : cat) {
+				for (String c : cat) {
 					System.out.println(c);
 					categoryList.add(gson.fromJson(c, Category.class));
 				}
 			}
-			if(envelope2.getObject().equals("IMAGE_LIST")) {
+			if (envelope2.getObject().equals("IMAGE_LIST")) {
 				String[] im = envelope2.getContent();
 				imageReceiver.receiveImagesFromServer(im);
 			}
-			
+
 			Envelope<AccessCredentials> envelope3 = new Envelope<AccessCredentials>();
 			envelope3.setObject("ACCESS_CREDENTIALS");
 			envelope3.setContent(new AccessCredentials("franc1", "bellecose"));
 			out.append(gson.toJson(envelope3) + "\n");
 			out.flush();
-			
+
 			String input = in.readLine();
 			JsonObject jsonObject = new JsonParser().parse(input).getAsJsonObject();
-			
-			if(jsonObject.get("object").toString().equals("\"FAILURE\"")) {
-				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+
+			if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
+				}.getType());
 				System.out.println(reportEnvelope.getContent());
-			}
-			else {
-				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+			} else {
+				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
+				}.getType());
 				System.out.println(userCredentialsEnvelope.getContent());
 			}
 			return;
@@ -84,12 +90,27 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ArrayList<Category> getCategoryList() {
 		return categoryList;
 	}
-	
+
 	public static void main(String[] args) {
 		Client c = new Client();
+	}
+
+	public String loginUser(Pair<String, String> login) {
+		String input = "";
+		Envelope<AccessCredentials> accessCredentialsEnvelope = new Envelope<AccessCredentials>();
+		accessCredentialsEnvelope.setObject("ACCESS_CREDENTIALS");
+		accessCredentialsEnvelope.setContent(new AccessCredentials(login.getKey(), login.getValue()));
+		out.append(gson.toJson(accessCredentialsEnvelope) + "\n");
+		out.flush();
+		try {
+			input = in.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return input;
 	}
 }

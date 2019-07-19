@@ -1,12 +1,22 @@
 package application;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import clientBiblioteca.AccessCredentials;
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.Envelope;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -14,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -22,6 +33,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -76,9 +88,12 @@ public class PublicController {
 
 	private Client client;
 
+	private Gson gson;
+
 	public void setMain(Main m) {
 		main = m;
 		client = m.client;
+		this.gson = new GsonBuilder().create();
 	}
 
 	// richiama cercaLibro()
@@ -103,12 +118,29 @@ public class PublicController {
 		if (loginResult == null)
 			return;
 
-		// do something! == vedi se è giusto, altrimenti alert!
+		String x = client.loginUser(loginResult);
+		JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+		if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+			Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+			}.getType());
+			alertErrore(reportEnvelope.getContent());
+		} else {
+			Envelope<String> userCredentialsEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+			}.getType());
+			if (userCredentialsEnvelope.getObject().equalsIgnoreCase("EMPLOYEE"))
+				main.setCommessoScene(new ArrayList<Book>());
+			else if (userCredentialsEnvelope.getObject().equalsIgnoreCase("CUSTOMER"))
+				main.setUtenteRegistratoLibriNoleggiatiScene();
+		}
+	}
 
-		if (loginResult.getKey().equalsIgnoreCase("admin"))
-			main.setCommessoScene(new ArrayList<Book>());
-		else
-			main.setUtenteRegistratoLibriNoleggiatiScene();
+	// alert di errore
+	private void alertErrore(String error) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Errore");
+		alert.setHeaderText(null);
+		alert.setContentText(error);
+		alert.showAndWait();
 	}
 
 	// interfaccia di login, restituisce username e password (anche nulli)
