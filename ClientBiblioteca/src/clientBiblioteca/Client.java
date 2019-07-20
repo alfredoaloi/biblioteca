@@ -69,7 +69,7 @@ public class Client implements Runnable {
 
 			Envelope<AccessCredentials> envelope3 = new Envelope<AccessCredentials>();
 			envelope3.setObject("ACCESS_CREDENTIALS");
-			envelope3.setContent(new AccessCredentials("franc1", "bellecose"));
+			envelope3.setContent(new AccessCredentials("aaaaa", "aaaaaa"));
 			out.append(gson.toJson(envelope3) + "\n");
 			out.flush();
 
@@ -85,6 +85,23 @@ public class Client implements Runnable {
 				}.getType());
 				Customer c = gson.fromJson(userCredentialsEnvelope.getContent(), Customer.class);
 				//System.out.println(c.getUsername());
+			}
+			envelope3 = new Envelope<AccessCredentials>();
+			envelope3.setObject("ACCESS_CREDENTIALS");
+			envelope3.setContent(new AccessCredentials("aaaaa", "aaaaaa"));
+			out.append(gson.toJson(envelope3) + "\n");
+			out.flush();
+			
+			input = in.readLine();
+			jsonObject = new JsonParser().parse(input).getAsJsonObject();
+			
+			if(jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+				System.out.println(reportEnvelope.getContent());
+			}
+			else {
+				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+				System.out.println(userCredentialsEnvelope.getContent());
 			}
 			return;
 		} catch (IOException e) {
