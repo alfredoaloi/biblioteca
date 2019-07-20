@@ -69,7 +69,7 @@ public class Client implements Runnable {
 
 			Envelope<AccessCredentials> envelope3 = new Envelope<AccessCredentials>();
 			envelope3.setObject("ACCESS_CREDENTIALS");
-			envelope3.setContent(new AccessCredentials("aaaaa", "aaaaaa"));
+			envelope3.setContent(new AccessCredentials("franc1", "bellecose"));
 			out.append(gson.toJson(envelope3) + "\n");
 			out.flush();
 
@@ -84,7 +84,7 @@ public class Client implements Runnable {
 				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
 				}.getType());
 				Customer c = gson.fromJson(userCredentialsEnvelope.getContent(), Customer.class);
-				//System.out.println(c.getUsername());
+				System.out.println(c.getUsername());
 			}
 			envelope3 = new Envelope<AccessCredentials>();
 			envelope3.setObject("ACCESS_CREDENTIALS");

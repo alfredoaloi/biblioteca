@@ -97,6 +97,21 @@
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font></Label>
+                                                      <Label fx:id="fineIncrement">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="giorniRimanenti">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="multa">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
                                                    </children>
                                                    <opaqueInsets>
                                                       <Insets />

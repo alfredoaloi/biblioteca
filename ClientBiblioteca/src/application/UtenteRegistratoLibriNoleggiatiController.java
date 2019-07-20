@@ -1,7 +1,11 @@
 package application;
 
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
@@ -72,6 +76,15 @@ public class UtenteRegistratoLibriNoleggiatiController {
 	@FXML
 	private MenuItem ricercaLibriMenuItem;
 
+	@FXML
+	private Label fineIncrement;
+
+	@FXML
+	private Label giorniRimanenti;
+
+	@FXML
+	private Label multa;
+
 	private Main main;
 
 	private Client client;
@@ -131,6 +144,9 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		bookLang.setText(null);
 		bookPages.setText(null);
 		bookDescr.setText(null);
+		fineIncrement.setText(null);
+		giorniRimanenti.setText(null);
+		multa.setText(null);
 		Tab tab = new Tab("Libri noleggiati");
 		VBox box = new VBox(10);
 		box.setPadding(new Insets(5));
@@ -151,7 +167,7 @@ public class UtenteRegistratoLibriNoleggiatiController {
 	}
 
 	// stampa le info relative ad un libro cliccato
-	public void vediInfo(Book book) {
+	public void vediInfo(LentBook book) {
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
 		bookImg.setImage(new Image(file.toURI().toString()));
@@ -161,18 +177,34 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		bookLang.setText(book.getLanguage());
 		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
+		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = null;
+		try {
+			date = dateFormat.parse(book.getDeadlineDate());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		Date now = new Date();
+		long diff = date.getTime() - now.getTime();
+		if (diff < 0)
+			giorniRimanenti.setText("Scaduto");
+		else
+			giorniRimanenti
+					.setText(Long.toString(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + " giorni rimanenti");
+		multa.setText(Double.toString(book.getFine()));
 	}
 
 	// passa alla utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		main.setUtenteRegistratoProfiloScene();
+		main.setUtenteRegistratoProfiloScene(customer);
 	}
 
 	// passa alla utenteRegistratoRicercaLibriScene
 	@FXML
 	void ricercaLibriPressed(ActionEvent event) {
-		main.setUtenteRegistratoRicercaLibriScene();
+		main.setUtenteRegistratoRicercaLibriScene(customer);
 	}
 
 	// passa alla publicScene

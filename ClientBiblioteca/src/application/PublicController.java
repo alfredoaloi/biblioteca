@@ -87,6 +87,15 @@ public class PublicController {
 
 	@FXML
 	private Label bookPages;
+	
+	@FXML
+	private Label nBooks;
+	
+	@FXML
+	private Label lendingPeriod;
+	
+	@FXML
+	private Label fineIncrement;
 
 	private Client client;
 
@@ -130,9 +139,11 @@ public class PublicController {
 			Envelope<String> userCredentialsEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
 			}.getType());
 			if (userCredentialsEnvelope.getObject().equalsIgnoreCase("EMPLOYEE"))
-				main.setCommessoScene(new ArrayList<Book>(), gson.fromJson(x, User.class));
+				main.setCommessoScene(new ArrayList<Book>(),
+						gson.fromJson(userCredentialsEnvelope.getContent(), User.class));
 			else if (userCredentialsEnvelope.getObject().equalsIgnoreCase("CUSTOMER"))
-				main.setUtenteRegistratoLibriNoleggiatiScene(gson.fromJson(x, Customer.class));
+				main.setUtenteRegistratoLibriNoleggiatiScene(
+						gson.fromJson(userCredentialsEnvelope.getContent(), Customer.class));
 		}
 	}
 
@@ -243,6 +254,9 @@ public class PublicController {
 		bookLang.setText(null);
 		bookPages.setText(null);
 		bookDescr.setText(null);
+		nBooks.setText(null);
+		lendingPeriod.setText(null);
+		fineIncrement.setText(null);
 		for (Category categoria : categorie) {
 			Tab tab = new Tab(categoria.getCategoryType());
 			VBox box = new VBox(10);
@@ -275,6 +289,9 @@ public class PublicController {
 		bookLang.setText(book.getLanguage());
 		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
+		nBooks.setText("Copie: " + book.getnBooks());
+		lendingPeriod.setText("Noleggiabile per " + book.getLendingPeriod() + " giorni");
+		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
 	// inizializza la scena

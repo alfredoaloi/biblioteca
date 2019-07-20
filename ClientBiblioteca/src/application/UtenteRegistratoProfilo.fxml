@@ -42,7 +42,7 @@
                      <children>
                         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <Label text="Nome: ">
+                              <Label fx:id="usernameLabel" text="Username">
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </VBox.margin>
@@ -50,7 +50,7 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <Label text="Cognome: ">
+                              <Label fx:id="nomeLabel" text="Nome">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -58,7 +58,7 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label text="Data di nascita: ">
+                              <Label fx:id="cognomeLabel" text="Cognome">
                                  <font>
                                     <Font size="20.0" />
                                  </font>
@@ -66,17 +66,9 @@
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label text="E cazzi vari:">
+                              <Label fx:id="emailLabel" text="E-mail">
                                  <font>
                                     <Font size="20.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Label alignment="CENTER" text="Contattaci inviando una mail a biblioteca@chiocciola.it - Cosenza, Via della Biblioteca, 1" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                                 <font>
-                                    <Font size="10.0" />
                                  </font>
                                  <VBox.margin>
                                     <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

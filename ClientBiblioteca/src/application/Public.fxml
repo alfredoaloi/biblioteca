@@ -95,6 +95,21 @@
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font></Label>
+                                                      <Label fx:id="nBooks">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="lendingPeriod">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="fineIncrement">
+                                                         <font>
+                                                            <Font name="Ubuntu" size="12.0" />
+                                                         </font>
+                                                      </Label>
                                                    </children>
                                                    <opaqueInsets>
                                                       <Insets />

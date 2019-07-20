@@ -45,13 +45,13 @@ public class Main extends Application {
 		stage.setScene(utenteRegistratoLibriNoleggiatiScene);
 	}
 
-	public void setUtenteRegistratoRicercaLibriScene() {
-		utenteRegistratoRicercaLibriController.init();
+	public void setUtenteRegistratoRicercaLibriScene(Customer customer) {
+		utenteRegistratoRicercaLibriController.init(customer);
 		stage.setScene(utenteRegistratoRicercaLibriScene);
 	}
 
-	public void setUtenteRegistratoProfiloScene() {
-		utenteRegistratoProfiloController.init();
+	public void setUtenteRegistratoProfiloScene(Customer c) {
+		utenteRegistratoProfiloController.init(c);
 		stage.setScene(utenteRegistratoProfiloScene);
 	}
 

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.Customer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -69,7 +70,18 @@ public class UtenteRegistratoRicercaLibriController {
 	@FXML
 	private Label bookTitle;
 
+	@FXML
+	private Label nBooks;
+
+	@FXML
+	private Label lendingPeriod;
+
+	@FXML
+	private Label fineIncrement;
+
 	private Client client;
+
+	private Customer customer;
 
 	public void setMain(Main m) {
 		main = m;
@@ -131,6 +143,9 @@ public class UtenteRegistratoRicercaLibriController {
 		bookLang.setText(null);
 		bookPages.setText(null);
 		bookDescr.setText(null);
+		nBooks.setText(null);
+		lendingPeriod.setText(null);
+		fineIncrement.setText(null);
 		for (Category categoria : categorie) {
 			Tab tab = new Tab(categoria.getCategoryType());
 			VBox box = new VBox(10);
@@ -163,25 +178,29 @@ public class UtenteRegistratoRicercaLibriController {
 		bookLang.setText(book.getLanguage());
 		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
+		nBooks.setText("Copie: " + book.getnBooks());
+		lendingPeriod.setText("Noleggiabile per " + book.getLendingPeriod() + " giorni");
+		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
 	// inizializza la scena
-	public void init() {
+	public void init(Customer c) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
 		cercaTextField.setText("");
+		customer = c;
 	}
 
 	// passa alla utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		main.setUtenteRegistratoProfiloScene();
+		main.setUtenteRegistratoProfiloScene(customer);
 	}
 
 	// passa alla utenteRegistratoLibriNoleggiatiScene
 	@FXML
 	void libriNoleggiatiPressed(ActionEvent event) {
-		//main.setUtenteRegistratoLibriNoleggiatiScene();
+		main.setUtenteRegistratoLibriNoleggiatiScene(customer);
 	}
 
 	// passa alla publicScene
