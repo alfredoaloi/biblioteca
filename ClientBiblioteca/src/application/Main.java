@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import clientBiblioteca.Book;
 import clientBiblioteca.Client;
+import clientBiblioteca.Customer;
+import clientBiblioteca.User;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -37,8 +39,9 @@ public class Main extends Application {
 		stage.setScene(publicScene);
 	}
 
-	public void setUtenteRegistratoLibriNoleggiatiScene() {
-		utenteRegistratoLibriNoleggiatiController.init();
+	public void setUtenteRegistratoLibriNoleggiatiScene(Customer customer) {
+		System.out.println(customer.getUsername());
+		utenteRegistratoLibriNoleggiatiController.init(customer);
 		stage.setScene(utenteRegistratoLibriNoleggiatiScene);
 	}
 
@@ -52,7 +55,7 @@ public class Main extends Application {
 		stage.setScene(utenteRegistratoProfiloScene);
 	}
 
-	public void setCommessoScene(ArrayList<Book> carrello) {
+	public void setCommessoScene(ArrayList<Book> carrello, User user) {
 		commessoController.init(carrello);
 		stage.setScene(commessoScene);
 	}

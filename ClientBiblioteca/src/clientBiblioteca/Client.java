@@ -83,7 +83,8 @@ public class Client implements Runnable {
 			} else {
 				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
 				}.getType());
-				System.out.println(userCredentialsEnvelope.getContent());
+				Customer c = gson.fromJson(userCredentialsEnvelope.getContent(), Customer.class);
+				//System.out.println(c.getUsername());
 			}
 			return;
 		} catch (IOException e) {
@@ -113,4 +114,30 @@ public class Client implements Runnable {
 		}
 		return input;
 	}
+
+	public ArrayList<LentBook> libriNoleggiati(String username) {
+		ArrayList<LentBook> noleggiati = new ArrayList<LentBook>();
+
+		Envelope<String> envelope = new Envelope<String>("GET_CUSTOMER_LENT_BOOKS", username);
+		System.out.println(username);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Envelope<String[]> array = gson.fromJson(input, new TypeToken<Envelope<String[]>>() {
+		}.getType());
+
+		for (String s : array.getContent()) {
+			System.out.println(s);
+			noleggiati.add(gson.fromJson(s, LentBook.class));
+		}
+
+		return noleggiati;
+	}
+
 }

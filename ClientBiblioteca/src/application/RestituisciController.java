@@ -208,7 +208,7 @@ public class RestituisciController {
 	// passa alla commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
-		main.setCommessoScene(new ArrayList<Book>());
+		//main.setCommessoScene(new ArrayList<Book>());
 	}
 
 	// passa alla publicScene

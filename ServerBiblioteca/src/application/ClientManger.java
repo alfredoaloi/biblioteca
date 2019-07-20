@@ -222,7 +222,6 @@ public class ClientManger implements Runnable {
 						Envelope<String> failureEnvelope = new Envelope<String>("FAILURE", statusReport.getMessage());
 						out.append(gson.toJson(failureEnvelope) + "\n");
 						out.flush();
-						out.append(gson.toJson(statusReport) + "\n");
 					}
 				}
 			}

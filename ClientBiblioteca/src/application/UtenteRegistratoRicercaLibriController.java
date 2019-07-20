@@ -181,7 +181,7 @@ public class UtenteRegistratoRicercaLibriController {
 	// passa alla utenteRegistratoLibriNoleggiatiScene
 	@FXML
 	void libriNoleggiatiPressed(ActionEvent event) {
-		main.setUtenteRegistratoLibriNoleggiatiScene();
+		//main.setUtenteRegistratoLibriNoleggiatiScene();
 	}
 
 	// passa alla publicScene

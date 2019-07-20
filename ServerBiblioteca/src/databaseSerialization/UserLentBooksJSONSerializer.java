@@ -21,7 +21,7 @@ public class UserLentBooksJSONSerializer extends BookListJSONSerializer {
 					booksResultSet.getString("Language"),
 					booksResultSet.getString("Description"),
 					booksResultSet.getInt("ISBN"),
-					booksResultSet.getInt("Num_of_books"),
+					0,
 					booksResultSet.getString("Image"),
 					booksResultSet.getInt("Lending_period"),
 					booksResultSet.getInt("Fine_increment"),

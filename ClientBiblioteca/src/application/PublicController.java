@@ -1,8 +1,6 @@
 package application;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -12,19 +10,21 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
-import clientBiblioteca.AccessCredentials;
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.Customer;
 import clientBiblioteca.Envelope;
+import clientBiblioteca.User;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -33,7 +33,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -45,6 +44,9 @@ import javafx.util.Callback;
 import javafx.util.Pair;
 
 // button color = #077807
+
+// customer account = franc1 - bellecose
+// employee account = alcalc - bellissimecose
 
 public class PublicController {
 
@@ -128,9 +130,9 @@ public class PublicController {
 			Envelope<String> userCredentialsEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
 			}.getType());
 			if (userCredentialsEnvelope.getObject().equalsIgnoreCase("EMPLOYEE"))
-				main.setCommessoScene(new ArrayList<Book>());
+				main.setCommessoScene(new ArrayList<Book>(), gson.fromJson(x, User.class));
 			else if (userCredentialsEnvelope.getObject().equalsIgnoreCase("CUSTOMER"))
-				main.setUtenteRegistratoLibriNoleggiatiScene();
+				main.setUtenteRegistratoLibriNoleggiatiScene(gson.fromJson(x, Customer.class));
 		}
 	}
 

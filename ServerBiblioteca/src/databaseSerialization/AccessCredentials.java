@@ -1,8 +1,8 @@
 package databaseSerialization;
 
 public class AccessCredentials {
-	String username;
-	String password;
+	private String username;
+	private String password;
 	
 	public AccessCredentials(String username, String password) {
 		super();

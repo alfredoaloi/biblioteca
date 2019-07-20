@@ -647,7 +647,7 @@ public class AmministrazioneController {
 	// passa a commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
-		main.setCommessoScene(new ArrayList<Book>());
+		//main.setCommessoScene(new ArrayList<Book>());
 	}
 
 	// passa a utenteRegistratoProfiloScene

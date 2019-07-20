@@ -33,7 +33,7 @@ public class UtenteRegistratoProfiloController {
 	// passa alla UtenteRegistratoLibriNoleggiariScene
 	@FXML
 	void libriNoleggiatiPressed(ActionEvent event) {
-		main.setUtenteRegistratoLibriNoleggiatiScene();
+		// main.setUtenteRegistratoLibriNoleggiatiScene();
 	}
 
 	// passa alla UtenteRegistratoRicercaLibriScene

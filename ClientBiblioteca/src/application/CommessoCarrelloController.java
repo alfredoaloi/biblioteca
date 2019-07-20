@@ -203,7 +203,7 @@ public class CommessoCarrelloController {
 	// passa a CommessoScene
 	@FXML
 	void aggiungiAltriReleased(MouseEvent event) {
-		main.setCommessoScene(carrello);
+		//main.setCommessoScene(carrello);
 	}
 
 	// passa alla restituisciScene
