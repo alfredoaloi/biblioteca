@@ -87,13 +87,13 @@ public class PublicController {
 
 	@FXML
 	private Label bookPages;
-	
+
 	@FXML
 	private Label nBooks;
-	
+
 	@FXML
 	private Label lendingPeriod;
-	
+
 	@FXML
 	private Label fineIncrement;
 
@@ -242,12 +242,8 @@ public class PublicController {
 	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
-		if (categorie.isEmpty()) {
-			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
-		} else {
-			bookTitle.setText("Clicca su un libro per vederne le informazioni");
-		}
-		bookImg.setImage(null); // manca un metodo getImg() in Book;
+		bookTitle.setText("Clicca su un libro per vederne le informazioni");
+		bookImg.setImage(null);
 		bookISBN.setText(null);
 		bookAuthor.setText(null);
 		bookPublisher.setText(null);
@@ -272,10 +268,14 @@ public class PublicController {
 				});
 				box.getChildren().add(l);
 			}
-			ScrollPane scroll = new ScrollPane(box);
-			tab.setContent(scroll);
-			tabPane.getTabs().add(tab);
+			if (!box.getChildren().isEmpty()) {
+				ScrollPane scroll = new ScrollPane(box);
+				tab.setContent(scroll);
+				tabPane.getTabs().add(tab);
+			}
 		}
+		if (tabPane.getTabs().isEmpty())
+			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 	}
 
 	// stampa le info relative ad un libro cliccato

@@ -439,9 +439,11 @@ public class DatabaseConnection {
 		pstmtIDFirstBook.setInt(1, ISBN);
 		ResultSet idFirstBookResultSet = pstmtIDFirstBook.executeQuery();
 		
+		int temp = idFirstBookResultSet.getInt(1);
+		
 		pstmtUserLentBook.setString(1, username);
 		pstmtUserLentBook.setString(2, new SimpleDateFormat("yyyy-MM-dd").format(calendar.getTime()));
-		pstmtUserLentBook.setInt(3, idFirstBookResultSet.getInt(1));
+		pstmtUserLentBook.setInt(3, temp);
 		int rowsAffected = pstmtUserLentBook.executeUpdate();
 		
 		if(rowsAffected != 1) {

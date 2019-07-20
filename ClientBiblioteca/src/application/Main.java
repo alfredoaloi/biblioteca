@@ -56,12 +56,12 @@ public class Main extends Application {
 	}
 
 	public void setCommessoScene(ArrayList<Book> carrello, User user) {
-		commessoController.init(carrello);
+		commessoController.init(carrello, user);
 		stage.setScene(commessoScene);
 	}
 
-	public void setCommessoCarrelloScene(ArrayList<Book> carrello) {
-		commessoCarrelloController.init(carrello);
+	public void setCommessoCarrelloScene(ArrayList<Book> carrello, User user) {
+		commessoCarrelloController.init(carrello, user);
 		stage.setScene(commessoCarrelloScene);
 	}
 
@@ -70,9 +70,9 @@ public class Main extends Application {
 		stage.setScene(amministrazioneScene);
 	}
 	
-	public void setRestituisciScene() {
-		restituisciController.init();
+	public void setRestituisciScene(User user) {
 		stage.setScene(restituisciScene);
+		restituisciController.init(user);
 	}
 	
 	@Override

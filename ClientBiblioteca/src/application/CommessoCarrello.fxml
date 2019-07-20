@@ -115,6 +115,16 @@
                                                             <Font name="SansSerif Regular" size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <Label fx:id="lendingPeriod">
+                                                         <font>
+                                                            <Font name="SansSerif Regular" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label fx:id="fineIncrement">
+                                                         <font>
+                                                            <Font name="SansSerif Regular" size="14.0" />
+                                                         </font>
+                                                      </Label>
                                                       <ImageView fx:id="removeCartButton" fitHeight="20.0" fitWidth="200.0" onMouseReleased="#removeCartReleased" pickOnBounds="true" preserveRatio="true">
                                                          <image>
                                                             <Image url="@../../risorse/removeCartButton.png" />

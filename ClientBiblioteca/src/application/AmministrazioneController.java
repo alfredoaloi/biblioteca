@@ -42,7 +42,7 @@ public class AmministrazioneController {
 
 	@FXML
 	private MenuItem restituisciMenuItem;
-	
+
 	@FXML
 	private MenuItem profiloMenuItem;
 
@@ -105,6 +105,15 @@ public class AmministrazioneController {
 
 	@FXML
 	private TextField t3;
+
+	@FXML
+	private Label addCommesso;
+
+	@FXML
+	private Label modCommesso;
+
+	@FXML
+	private Label delCommesso;
 
 	boolean utente;
 
@@ -388,6 +397,140 @@ public class AmministrazioneController {
 		}
 	}
 
+	// aggiunge un nuovo libro
+	@FXML
+	void addCommessoReleased(MouseEvent event) {
+		utente = false;
+		mod = false;
+		l1.setText("Titolo		");
+		l1.setVisible(true);
+		t1.setText("");
+		t1.setVisible(true);
+		t1.setEditable(true);
+		l2.setText("Autore		");
+		l2.setVisible(true);
+		t2.setText("");
+		t2.setVisible(true);
+		l3.setText("Pagine		");
+		l3.setVisible(true);
+		t3.setText("");
+		t3.setVisible(true);
+		l4.setText("Editore		");
+		l4.setVisible(true);
+		t4.setText("");
+		t4.setVisible(true);
+		l5.setText("Lingua		");
+		l5.setVisible(true);
+		t5.setText("");
+		t5.setVisible(true);
+		l6.setText("ISBN			");
+		l6.setVisible(true);
+		t6.setText("");
+		t6.setVisible(true);
+		t6.setEditable(true);
+		l7.setText("Categoria		");
+		l7.setVisible(true);
+		t7.setText("");
+		t7.setVisible(true);
+		l8.setText("Descrizione	");
+		l8.setVisible(true);
+		t8.setText("");
+		t8.setVisible(true);
+		inviaButton.setDisable(false);
+		inviaButton.setVisible(true);
+	}
+
+	// modifica un libro
+	@FXML
+	void modCommessoReleased(MouseEvent event) {
+		utente = false;
+		mod = true;
+		String titolo = dialogReturnsTitolo();
+		if (titolo == null)
+			return;
+		// cerca il titolo tra i titoli dedei libri
+		ArrayList<Book> trovati = new ArrayList<Book>();
+		for (Category c : client.getCategoryList()) {
+			for (Book b : c.getBooks()) {
+				if (b.getTitle().toLowerCase().contains(titolo)) {
+					trovati.add(b);
+				}
+			}
+		}
+		if (trovati.isEmpty()) {
+			nessunLibroTrovato();
+		} else {
+			Book book = dialogOptionListBook(trovati);
+			if (book == null)
+				return;
+			l1.setText("Titolo		");
+			l1.setVisible(true);
+			t1.setText(book.getTitle());
+			t1.setVisible(true);
+			l2.setText("Autore		");
+			l2.setVisible(true);
+			t2.setText(book.getAuthor());
+			t2.setVisible(true);
+			l3.setText("Pagine		");
+			l3.setVisible(true);
+			t3.setText(Integer.toString(book.getnPages()));
+			t3.setVisible(true);
+			l4.setText("Editore		");
+			l4.setVisible(true);
+			t4.setText(book.getPublisher());
+			t4.setVisible(true);
+			l5.setText("Lingua		");
+			l5.setVisible(true);
+			t5.setText(book.getLanguage());
+			t5.setVisible(true);
+			l6.setText("ISBN			");
+			l6.setVisible(true);
+			t6.setText(Integer.toString(book.getISBN()));
+			t6.setVisible(true);
+			t6.setEditable(false);
+			l7.setText("Categoria		");
+			l7.setVisible(true);
+			t7.setText("ATTENZIONE, NON LO SO!!!!");
+			t7.setVisible(true);
+			l8.setText("Descrizione	");
+			l8.setVisible(true);
+			t8.setText(book.getDescription());
+			t8.setVisible(true);
+			inviaButton.setDisable(false);
+			inviaButton.setVisible(true);
+		}
+	}
+
+	// elimina un libro
+	@FXML
+	void delCommessoReleased(MouseEvent event) {
+		String titolo = dialogReturnsTitolo();
+		if (titolo == null)
+			return;
+		// cerca il titolo tra i titoli dedei libri
+		ArrayList<Book> trovati = new ArrayList<Book>();
+		for (Category c : client.getCategoryList()) {
+			for (Book b : c.getBooks()) {
+				if (b.getTitle().toLowerCase().contains(titolo)) {
+					trovati.add(b);
+				}
+			}
+		}
+		if (trovati.isEmpty()) {
+			nessunLibroTrovato();
+		} else {
+			Book book = dialogOptionListBook(trovati);
+			if (book == null)
+				return;
+			if (sicuroElimina())
+				delConfermata();
+			// delete
+			else
+				System.out.println(book + " non eliminato");
+
+		}
+	}
+
 	@FXML
 	void inviaReleased(MouseEvent event) {
 		// aggiungi utente
@@ -641,13 +784,13 @@ public class AmministrazioneController {
 	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
-		main.setRestituisciScene();
+//		main.setRestituisciScene();
 	}
 
 	// passa a commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
-		//main.setCommessoScene(new ArrayList<Book>());
+		// main.setCommessoScene(new ArrayList<Book>());
 	}
 
 	// passa a utenteRegistratoProfiloScene

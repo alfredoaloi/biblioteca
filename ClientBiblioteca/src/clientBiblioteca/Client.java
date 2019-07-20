@@ -91,16 +91,17 @@ public class Client implements Runnable {
 			envelope3.setContent(new AccessCredentials("aaaaa", "aaaaaa"));
 			out.append(gson.toJson(envelope3) + "\n");
 			out.flush();
-			
+
 			input = in.readLine();
 			jsonObject = new JsonParser().parse(input).getAsJsonObject();
-			
-			if(jsonObject.get("object").toString().equals("\"FAILURE\"")) {
-				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+
+			if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
+				}.getType());
 				System.out.println(reportEnvelope.getContent());
-			}
-			else {
-				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
+			} else {
+				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
+				}.getType());
 				System.out.println(userCredentialsEnvelope.getContent());
 			}
 			return;
@@ -157,4 +158,94 @@ public class Client implements Runnable {
 		return noleggiati;
 	}
 
+	public ArrayList<Customer> getCustomersList() {
+		ArrayList<Customer> customers = new ArrayList<Customer>();
+
+		Envelope<String> envelope = new Envelope<String>("GET_CUSTOMER_LIST", "");
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Envelope<String[]> array = gson.fromJson(input, new TypeToken<Envelope<String[]>>() {
+		}.getType());
+
+		for (String s : array.getContent()) {
+			System.out.println(s);
+			customers.add(gson.fromJson(s, Customer.class));
+		}
+
+		return customers;
+	}
+
+	public String setCustomerLentBook(String username, ArrayList<Book> carrello) {
+		Envelope<String> envelope = new Envelope<String>("SET_CUSTOMER_LENT_BOOKS", username);
+		Book[] temp = carrello.toArray(new Book[carrello.size()]);
+		Envelope<Book[]> array = new Envelope<Book[]>("", temp);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		out.append(gson.toJson(array) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+
+	public void refreshDB() {
+		categoryList.clear();
+		Envelope<String> envelope = new Envelope<String>("REFRESH", "");
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+
+		try {
+			String s1 = in.readLine();
+			String s2 = in.readLine();
+			Envelope<String[]> envelope1 = new Envelope<String[]>();
+			Envelope<String[]> envelope2 = new Envelope<String[]>();
+			envelope1 = gson.fromJson(s1, new TypeToken<Envelope<String[]>>() {
+			}.getType());
+			envelope2 = gson.fromJson(s2, new TypeToken<Envelope<String[]>>() {
+			}.getType());
+			if (envelope1.getObject().equals("BOOK_LIST")) {
+				String[] cat = envelope1.getContent();
+				for (String c : cat) {
+					System.out.println(c);
+					categoryList.add(gson.fromJson(c, Category.class));
+				}
+			}
+			if (envelope2.getObject().equals("IMAGE_LIST")) {
+				String[] im = envelope2.getContent();
+				imageReceiver.receiveImagesFromServer(im);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String returnBook(LentBook book) {
+		Book[] temp = new Book[1];
+		temp[0] = book;
+		Envelope<Book[]> envelope = new Envelope<Book[]>("SET_CUSTOMER_RETURNED_BOOKS", temp);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
 }

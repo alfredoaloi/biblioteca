@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.User;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -84,9 +85,20 @@ public class CommessoController {
 	@FXML
 	private Label bookPages;
 
+	@FXML
+	private Label nBooks;
+
+	@FXML
+	private Label lendingPeriod;
+
+	@FXML
+	private Label fineIncrement;
+
 	private Book activeBook;
 
 	private ArrayList<Book> carrello;
+
+	private User user;
 
 	public void setMain(Main m) {
 		main = m;
@@ -94,13 +106,14 @@ public class CommessoController {
 	}
 
 	// inizializza la scena
-	public void init(ArrayList<Book> carrello) {
+	public void init(ArrayList<Book> carrello, User user) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
 		cercaTextField.setText("");
 		addCartButton.setVisible(false);
 		addCartButton.setDisable(true);
 		this.carrello = carrello;
+		this.user = user;
 	}
 
 	// richiama cercaLibro()
@@ -146,20 +159,17 @@ public class CommessoController {
 	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
-		if (categorie.isEmpty()) {
-			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
-		} else {
-			bookTitle.setText("Clicca su un libro per vederne le informazioni");
-		}
-		bookImg.setImage(null); // manca un metodo getImg() in Book;
+		bookTitle.setText("Clicca su un libro per vederne le informazioni");
+		bookImg.setImage(null);
 		bookISBN.setText(null);
 		bookAuthor.setText(null);
 		bookPublisher.setText(null);
 		bookLang.setText(null);
 		bookPages.setText(null);
 		bookDescr.setText(null);
-		addCartButton.setVisible(false);
-		addCartButton.setDisable(true);
+		nBooks.setText(null);
+		lendingPeriod.setText(null);
+		fineIncrement.setText(null);
 		for (Category categoria : categorie) {
 			Tab tab = new Tab(categoria.getCategoryType());
 			VBox box = new VBox(10);
@@ -175,14 +185,19 @@ public class CommessoController {
 				});
 				box.getChildren().add(l);
 			}
-			ScrollPane scroll = new ScrollPane(box);
-			tab.setContent(scroll);
-			tabPane.getTabs().add(tab);
+			if (!box.getChildren().isEmpty()) {
+				ScrollPane scroll = new ScrollPane(box);
+				tab.setContent(scroll);
+				tabPane.getTabs().add(tab);
+			}
 		}
+		if (tabPane.getTabs().isEmpty())
+			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 	}
 
 	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
+		activeBook = book;
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
 		bookImg.setImage(new Image(file.toURI().toString()));
@@ -192,32 +207,44 @@ public class CommessoController {
 		bookLang.setText(book.getLanguage());
 		bookPages.setText("Pagine: " + book.getnPages());
 		bookDescr.setText(book.getDescription());
-		activeBook = book;
 		addCartButton.setVisible(true);
 		addCartButton.setDisable(false);
+		nBooks.setText("Copie: " + book.getnBooks());
+		lendingPeriod.setText("Noleggiabile per " + book.getLendingPeriod() + " giorni");
+		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
 	// mette il libro selezionato nel carrello (ArrayList<Book>)
 	@FXML
 	void addCartReleased(MouseEvent event) {
-		Alert alert = new Alert(Alert.AlertType.INFORMATION);
-		alert.setTitle("Libro aggiunto al carrello!");
-		alert.setHeaderText(null);
-		alert.setContentText(activeBook.getTitle() + " (ISBN: " + activeBook.getISBN() + ") aggiunto al carrello!");
-		alert.showAndWait();
-		carrello.add(activeBook);
+		if (activeBook.getnBooks() > 0) {
+			carrello.add(activeBook);
+			activeBook.setnBooks(activeBook.getnBooks() - 1);
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			alert.setTitle("Libro aggiunto al carrello!");
+			alert.setHeaderText(null);
+			alert.setContentText(activeBook.toString() + " aggiunto al carrello!");
+			alert.showAndWait();
+		} else {
+			Alert alert = new Alert(Alert.AlertType.ERROR);
+			alert.setTitle("Errore");
+			alert.setHeaderText(null);
+			alert.setContentText(activeBook.toString() + " non ha copie sufficienti");
+			alert.showAndWait();
+		}
+		vediInfo(activeBook);
 	}
 
 	// passa a commessoCarrelloScene
 	@FXML
 	void cartReleased(MouseEvent event) {
-		main.setCommessoCarrelloScene(carrello);
+		main.setCommessoCarrelloScene(carrello, user);
 	}
 
 	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
-		main.setRestituisciScene();
+		main.setRestituisciScene(user);
 	}
 
 	// passa a amministrazioneScene

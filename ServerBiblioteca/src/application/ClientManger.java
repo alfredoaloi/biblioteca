@@ -93,36 +93,54 @@ public class ClientManger implements Runnable {
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.insertNewCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"UPDATE_CUSTOMER\"")) {
 							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.updateCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"DELETE_CUSTOMER\"")) {
 							Envelope<String> usernameEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.deleteCustomer(usernameEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"NEW_EMPLOYEE\"")) {
 							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.insertNewCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"UPDATE_EMPLOYEE\"")) {
 							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.updateCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"DELETE_EMPLOYEE\"")) {
 							Envelope<String> usernameEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.deleteCustomer(usernameEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"NEW_BOOK\"")) {
 							Envelope<Category[]> categoryEnvelope = gson.fromJson(input, new TypeToken<Envelope<Category[]>>(){}.getType());
@@ -138,6 +156,9 @@ public class ClientManger implements Runnable {
 							}
 							serverConnection.refreshBookList();
 							serverConnection.refreshImageList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"UPDATE_BOOK\"")) {
 							Envelope<Category[]> categoryEnvelope = gson.fromJson(input, new TypeToken<Envelope<Category[]>>(){}.getType());
@@ -157,6 +178,9 @@ public class ClientManger implements Runnable {
 							}
 							serverConnection.refreshBookList();
 							serverConnection.refreshImageList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"DELETE_BOOK\"")) {
 							Envelope<Book[]> bookEnvelope = gson.fromJson(input, new TypeToken<Envelope<Book[]>>(){}.getType());
@@ -165,6 +189,9 @@ public class ClientManger implements Runnable {
 								db.deleteBook(book.getISBN(), employeeUsername);
 							serverConnection.refreshBookList();
 							serverConnection.refreshImageList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"GET_CUSTOMER_LIST\"")) {
 							String[] customerList = serverConnection.getUserListJSONSerializer().getJSONCustomerArray();
@@ -195,6 +222,11 @@ public class ClientManger implements Runnable {
 							for(Book book : lentBooksEnvelope.getContent()) {
 								db.updateCustomerLentBook(book.getISBN(), usernameEnvelope.getContent());
 							}
+							serverConnection.refreshBookList();
+							serverConnection.refreshImageList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"SET_CUSTOMER_RETURNED_BOOKS\"")) {
 							Envelope<Book[]> returnedBooksEnvelope = 
@@ -203,6 +235,11 @@ public class ClientManger implements Runnable {
 							for(Book book : returnedBooksEnvelope.getContent()) {
 								db.updateCustomerReturnedBook(book.getBookID());
 							}
+							serverConnection.refreshBookList();
+							serverConnection.refreshImageList();
+							Envelope<String> e = new Envelope<String>("SUCCESS", "");
+							out.append(gson.toJson(e) + "\n");
+							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"REFRESH\"")) {
 							stringArray = serverConnection.getBookListJSONSerializer().getJSONStringArray();

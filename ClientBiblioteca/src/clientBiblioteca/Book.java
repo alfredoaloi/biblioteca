@@ -31,6 +31,10 @@ public class Book {
 		this.fineIncrement = fineIncrement;
 	}
 
+	@Override
+	public String toString() {
+		return Integer.toString(ISBN) + " - \"" + title + "\"";
+	}
 
 	public int getBookID() {
 		return bookID;

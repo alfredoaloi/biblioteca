@@ -18,4 +18,9 @@ public class Customer extends User{
 	public int getExpiredBooks() {
 		return expiredBooks;
 	}	
+	
+	@Override
+	public String toString() {
+		return getUsername() + " - " + getName() + " " + getSurname();
+	}
 }
