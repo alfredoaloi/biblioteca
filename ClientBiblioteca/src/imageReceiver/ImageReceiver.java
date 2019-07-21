@@ -52,4 +52,10 @@ public class ImageReceiver {
 			image.delete();
 	}
 
+	public String[] getImageNames() {
+		File imageFolder = new File(imageFolderPath);
+		String[] imageFolderFileNames = imageFolder.list();
+		return imageFolderFileNames;
+	}
+	
 }

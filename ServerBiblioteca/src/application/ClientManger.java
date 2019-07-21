@@ -19,6 +19,7 @@ import databaseManagement.DatabaseConnection;
 import databaseSerialization.AccessCredentials;
 import databaseSerialization.Book;
 import databaseSerialization.Category;
+import databaseSerialization.Customer;
 import databaseSerialization.User;
 import databaseSerialization.UserLentBooksJSONSerializer;
 import envelopeManagement.Envelope;
@@ -89,7 +90,7 @@ public class ClientManger implements Runnable {
 							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"NEW_CUSTOMER\"")) {
-							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
+							Envelope<Customer> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<Customer>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.insertNewCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
@@ -98,7 +99,7 @@ public class ClientManger implements Runnable {
 							out.flush();
 						}
 						else if(jsonObject.get("object").toString().equals("\"UPDATE_CUSTOMER\"")) {
-							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
+							Envelope<Customer> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<Customer>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
 							db.updateCustomer(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
@@ -118,7 +119,7 @@ public class ClientManger implements Runnable {
 						else if(jsonObject.get("object").toString().equals("\"NEW_EMPLOYEE\"")) {
 							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
-							db.insertNewCustomer(userEnvelope.getContent(), employeeUsername);
+							db.insertNewEmployee(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
 							Envelope<String> e = new Envelope<String>("SUCCESS", "");
 							out.append(gson.toJson(e) + "\n");
@@ -127,7 +128,7 @@ public class ClientManger implements Runnable {
 						else if(jsonObject.get("object").toString().equals("\"UPDATE_EMPLOYEE\"")) {
 							Envelope<User> userEnvelope = gson.fromJson(input, new TypeToken<Envelope<User>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
-							db.updateCustomer(userEnvelope.getContent(), employeeUsername);
+							db.updateEmployee(userEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
 							Envelope<String> e = new Envelope<String>("SUCCESS", "");
 							out.append(gson.toJson(e) + "\n");
@@ -136,7 +137,7 @@ public class ClientManger implements Runnable {
 						else if(jsonObject.get("object").toString().equals("\"DELETE_EMPLOYEE\"")) {
 							Envelope<String> usernameEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>(){}.getType());
 							DatabaseConnection db = serverConnection.getDatabaseConnection();
-							db.deleteCustomer(usernameEnvelope.getContent(), employeeUsername);
+							db.deleteEmployee(usernameEnvelope.getContent(), employeeUsername);
 							serverConnection.refreshUserList();
 							Envelope<String> e = new Envelope<String>("SUCCESS", "");
 							out.append(gson.toJson(e) + "\n");
@@ -148,7 +149,7 @@ public class ClientManger implements Runnable {
 							for(Category category : categoryEnvelope.getContent()) {
 								ResultSet categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
 								if(!categoryIDResultSet.next()) {
-									//inserisci in database nuova categoria
+									db.setNewCategory(category.getCategoryType());
 									categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
 								}
 								for(Book book : category.getBooks())
@@ -166,7 +167,7 @@ public class ClientManger implements Runnable {
 							for(Category category : categoryEnvelope.getContent()) {
 								ResultSet categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
 								if(!categoryIDResultSet.next()) {
-									//inserisci in database nuova categoria
+									db.setNewCategory(category.getCategoryType());
 									categoryIDResultSet = db.getCategoryIDFromName(category.getCategoryType());
 								}
 								for(Book book : category.getBooks()) {

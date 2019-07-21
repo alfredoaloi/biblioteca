@@ -94,8 +94,8 @@ public class DatabaseConnection {
 	}
 	
 	public void insertNewBook(Book book, int categoryID, String userID) throws SQLException, Failure {
-		String insert = "INSERT INTO Books(Title, Author, Category_ID, Num_of_pages, Publisher, Language, Description, ISBN, Lending_period, Fine_increment) " + 
-						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String insert = "INSERT INTO Books(Title, Author, Category_ID, Num_of_pages, Publisher, Language, Description, ISBN, Lending_period, Fine_increment, Image) " + 
+						"VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		String log 	  = "INSERT INTO Log (User_ID, Book_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
 		
 		PreparedStatement pstmtInsert = conn.prepareStatement(insert, Statement.RETURN_GENERATED_KEYS);
@@ -113,6 +113,7 @@ public class DatabaseConnection {
 		pstmtInsert.setInt(8, book.getISBN());
 		pstmtInsert.setInt(9, book.getLendingPeriod());
 		pstmtInsert.setInt(10, book.getFineIncrement());
+		pstmtInsert.setString(11, book.getImage());
 		pstmtInsert.executeUpdate();
 		
 		ResultSet rs = pstmtInsert.getGeneratedKeys();
@@ -213,7 +214,7 @@ public class DatabaseConnection {
 	public void insertNewCustomer(User customer, String userID) throws Failure {
 		try {
 			String insert = "INSERT INTO Customer_Account " + 
-							"VALUES(?, ?, ?, ?, ?, 'GREEN', 0);";
+							"VALUES(?, ?, ?, ?, ?, 'GREEN');";
 			String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
 			
 			PreparedStatement pstmtInsert = conn.prepareStatement(insert);
@@ -307,7 +308,7 @@ public class DatabaseConnection {
 	
 	public void insertNewEmployee(User employee, String userID) throws Failure {
 		try {
-			String insert = "INSERT INTO Customer_Account " + 
+			String insert = "INSERT INTO Employee_Account " + 
 							"VALUES(?, ?, ?, ?, ?);";
 			String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'INSERT');";
 			
@@ -341,7 +342,7 @@ public class DatabaseConnection {
 	}
 	
 	public void updateEmployee(User employee, String userID) throws SQLException, Failure {
-		String update = "UPDATE Customer_Account " +
+		String update = "UPDATE Employee_Account " +
 						"SET Username = ?, Password = ?, Name = ?, Surname = ?, E_Mail = ? " +
 						"WHERE Username = ?;";
 		String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'UPDATE');";
@@ -374,7 +375,7 @@ public class DatabaseConnection {
 	}
 	
 	public void deleteEmployee(String employeeID, String userID) throws SQLException, Failure {
-		String delete = "DELETE FROM Customer_Account " + 
+		String delete = "DELETE FROM Employee_Account " + 
 						"WHERE Username = ?;";
 		String log 	  = "INSERT INTO Log (User_ID, Customer_ID, Date, Update_type) VALUES (?, ?, DATE('now'), 'DELETE');";
 		

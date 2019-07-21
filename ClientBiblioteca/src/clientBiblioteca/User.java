@@ -24,5 +24,9 @@ public class User extends AccessCredentials{
 		return E_mail;
 	}
 	
+	@Override
+	public String toString() {
+		return getUsername() + " - " + name + " " + Surname;
+	}
 	
 }

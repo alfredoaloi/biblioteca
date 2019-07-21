@@ -26,6 +26,7 @@ public class Main extends Application {
 	Scene commessoCarrelloScene;
 	Scene amministrazioneScene;
 	Scene restituisciScene;
+	Scene commessoProfiloScene;
 	PublicController publicController;
 	UtenteRegistratoLibriNoleggiatiController utenteRegistratoLibriNoleggiatiController;
 	UtenteRegistratoRicercaLibriController utenteRegistratoRicercaLibriController;
@@ -34,6 +35,7 @@ public class Main extends Application {
 	CommessoCarrelloController commessoCarrelloController;
 	AmministrazioneController amministrazioneController;
 	RestituisciController restituisciController;
+	CommessoProfiloController commessoProfiloController;
 	FXMLLoader loader;
 
 	public void setPublicScene() {
@@ -67,19 +69,23 @@ public class Main extends Application {
 		stage.setScene(commessoCarrelloScene);
 	}
 
-	public void setAmministrazioneScene() {
-		amministrazioneController.init();
+	public void setAmministrazioneScene(User user) {
+		amministrazioneController.setUser(user);
 		stage.setScene(amministrazioneScene);
 	}
 
-	public void setRestituisciScene(User user) {
+	public void setRestituisciScene(User user, Customer customer) {
+		restituisciController.init(user, customer);
 		stage.setScene(restituisciScene);
-		restituisciController.init(user);
 	}
 
+	public void setCommessoProfiloScene(User user) {
+		commessoProfiloController.init(user);
+		stage.setScene(commessoProfiloScene);
+	}
+	
 	@Override
 	public void start(Stage primaryStage) {
-		// if client == null return;
 		stage = primaryStage;
 		try {
 			loader = new FXMLLoader(getClass().getResource("Public.fxml"));
@@ -114,6 +120,10 @@ public class Main extends Application {
 			AnchorPane rootRestituisci = loader.load();
 			restituisciController = loader.getController();
 			restituisciController.setMain(this);
+			loader = new FXMLLoader(getClass().getResource("CommessoProfilo.fxml"));
+			AnchorPane rootCommessoProfilo = loader.load();
+			commessoProfiloController = loader.getController();
+			commessoProfiloController.setMain(this);
 
 			publicScene = new Scene(rootPublic, 1000, 600);
 			utenteRegistratoLibriNoleggiatiScene = new Scene(rootUtenteRegistratoLibriNoleggiati, 1000, 600);
@@ -123,15 +133,18 @@ public class Main extends Application {
 			commessoCarrelloScene = new Scene(rootCommessoCarrello, 1000, 600);
 			amministrazioneScene = new Scene(rootAmministrazione, 1000, 600);
 			restituisciScene = new Scene(rootRestituisci, 1000, 600);
+			commessoProfiloScene = new Scene(rootCommessoProfilo, 1000, 600);
 
 			setPublicScene();
 			primaryStage = stage;
+			primaryStage.setTitle("Biblioteca");
 			primaryStage.setMinWidth(1000);
 			primaryStage.setMinHeight(600);
 			primaryStage.setWidth(1000);
 			primaryStage.setHeight(600);
 			primaryStage.show();
-
+			
+			primaryStage.setOnCloseRequest(e->client.getImageReceiver().clearImageFolder());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

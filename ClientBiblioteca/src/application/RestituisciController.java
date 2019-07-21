@@ -5,8 +5,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.google.gson.Gson;
@@ -27,14 +25,12 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -109,7 +105,7 @@ public class RestituisciController {
 
 	private User user;
 
-	private Customer activeCustomer;
+	private Customer customer;
 
 	private Gson gson;
 
@@ -137,7 +133,7 @@ public class RestituisciController {
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<LentBook> trovati = new ArrayList<LentBook>();
-		for (LentBook book : client.libriNoleggiati(activeCustomer.getUsername())) {
+		for (LentBook book : client.libriNoleggiati(customer.getUsername())) {
 			if (book.getTitle().toLowerCase().contains(nome))
 				trovati.add(book);
 		}
@@ -216,40 +212,17 @@ public class RestituisciController {
 	}
 
 	// inizializza la scena
-	public void init(User user) {
+	public void init(User user, Customer customer) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		cercaTextField.setText("");
 		restituisciButton.setVisible(false);
 		restituisciButton.setDisable(true);
 		this.user = user;
-		activeCustomer = null;
-
-		String cognome = dialogReturnsCognome();
-		if (cognome == null) {
-			main.setCommessoScene(new ArrayList<Book>(), user);
-			return;
-		}
-		ArrayList<Customer> trovati = new ArrayList<Customer>();
-		ArrayList<Customer> customers = client.getCustomersList();
-		for (Customer c : customers)
-			if (c.getSurname().toLowerCase().contains(cognome))
-				trovati.add(c);
-		if (trovati.isEmpty()) {
-			nessunUtenteTrovato();
-			main.setCommessoScene(new ArrayList<Book>(), user);
-			return;
-		} else {
-			Customer customer = dialogOptionListCustomer(trovati);
-			if (customer == null) {
-				main.setCommessoScene(new ArrayList<Book>(), user);
-				return;
-			}
-			activeCustomer = customer;
-			stampaLibri(client.libriNoleggiati(activeCustomer.getUsername()));
-		}
+		this.customer = customer;
+		stampaLibri(client.libriNoleggiati(customer.getUsername()));
 	}
 
-//alert di input
+	//alert di input
 	private void alertSuccesso() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Successo");
@@ -267,57 +240,11 @@ public class RestituisciController {
 		alert.showAndWait();
 	}
 
-	// ritorna una stringa
-	private String dialogReturnsCognome() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Inserisci il cognome");
-		dialog.setHeaderText(null);
-		dialog.setContentText("Inserisci il cognome");
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent())
-			return result.get().toLowerCase();
-		else
-			return null;
-	}
-
-	// alert di errore
-	private void nessunUtenteTrovato() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Nesun utente trovato");
-		alert.setHeaderText(null);
-		alert.setContentText("Nessun utente trovato");
-		alert.showAndWait();
-	}
-
-	// ritorna un utente data una sottostringa del cognome
-	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
-		ArrayList<String> utenti = new ArrayList<String>();
-		for (Customer c : trovati)
-			utenti.add(c.toString());
-		List<String> choices = utenti;
-
-		ChoiceDialog<String> dialog = new ChoiceDialog<String>("---", choices);
-		dialog.setTitle("Scegli un utente");
-		dialog.setHeaderText(null);
-		dialog.setContentText("Scegli un utente");
-
-		String temp;
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()) {
-			temp = result.get();
-			for (Customer c : trovati) {
-				if (c.toString().equals(temp))
-					return c;
-			}
-		}
-		return null;
-	}
-
 	@FXML
 	public void restituisciReleased(MouseEvent event) {
 		String x = client.returnBook(activeBook);
 		client.refreshDB();
-		stampaLibri(client.libriNoleggiati(activeCustomer.getUsername()));
+		stampaLibri(client.libriNoleggiati(customer.getUsername()));
 		JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
 		if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
 			Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
@@ -326,20 +253,20 @@ public class RestituisciController {
 		} else {
 			alertSuccesso();
 			client.refreshDB();
-			stampaLibri(client.libriNoleggiati(activeCustomer.getUsername()));
+			stampaLibri(client.libriNoleggiati(customer.getUsername()));
 		}
 	}
 
 	// passa alla amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
-		main.setAmministrazioneScene();
+		main.setAmministrazioneScene(user);
 	}
 
 	// passa alla
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		System.out.println("profilo commesso");
+		main.setCommessoProfiloScene(user);
 	}
 
 	// passa alla commessoScene

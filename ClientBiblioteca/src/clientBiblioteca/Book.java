@@ -135,4 +135,8 @@ public class Book {
 		this.fineIncrement = fineIncrement;
 	}
 
+	public boolean equals(Book b) {
+		return ISBN == b.getISBN();
+	}
+	
 }

@@ -335,19 +335,35 @@ public class CommessoCarrelloController {
 	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
-		main.setRestituisciScene(user);
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
+			return;
+		ArrayList<Customer> trovati = new ArrayList<Customer>();
+		ArrayList<Customer> customers = client.getCustomersList();
+		for (Customer c : customers)
+			if (c.getSurname().toLowerCase().contains(cognome))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+			return;
+		} else {
+			Customer customer = dialogOptionListCustomer(trovati);
+			if (customer == null)
+				return;
+			main.setRestituisciScene(user, customer);
+		}
 	}
 
 	// passa a amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
-		main.setAmministrazioneScene();
+		main.setAmministrazioneScene(user);
 	}
 
 	// passa a commessoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		System.out.println("profilo comm");
+		main.setCommessoProfiloScene(user);
 	}
 
 	// passa a publicScene

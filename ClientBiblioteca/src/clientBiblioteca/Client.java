@@ -27,7 +27,7 @@ public class Client implements Runnable {
 	private ImageReceiver imageReceiver;
 	private BufferedReader in;
 	private PrintWriter out;
-	
+
 	public Client() {
 		try {
 			this.socket = new Socket("localhost", 8000);
@@ -45,6 +45,7 @@ public class Client implements Runnable {
 			alert.setHeaderText(null);
 			alert.setContentText("Connessione al server fallita!");
 			alert.showAndWait();
+			System.exit(0);
 		}
 	}
 
@@ -184,6 +185,30 @@ public class Client implements Runnable {
 
 		return customers;
 	}
+	
+	public ArrayList<User> getEmployeesList() {
+		ArrayList<User> user = new ArrayList<User>();
+
+		Envelope<String> envelope = new Envelope<String>("GET_EMPLOYEE_LIST", "");
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Envelope<String[]> array = gson.fromJson(input, new TypeToken<Envelope<String[]>>() {
+		}.getType());
+
+		for (String s : array.getContent()) {
+			System.out.println(s);
+			user.add(gson.fromJson(s, User.class));
+		}
+
+		return user;
+	}
 
 	public String setCustomerLentBook(String username, ArrayList<Book> carrello) {
 		Envelope<String> envelope = new Envelope<String>("SET_CUSTOMER_LENT_BOOKS", username);
@@ -251,4 +276,151 @@ public class Client implements Runnable {
 
 		return input;
 	}
+
+	public ImageReceiver getImageReceiver() {
+		return imageReceiver;
+	}
+
+	public String delCustomer(String username) {
+		Envelope<String> envelope = new Envelope<String>("DELETE_CUSTOMER", username);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String delUser(String username) {
+		Envelope<String> envelope = new Envelope<String>("DELETE_EMPLOYEE", username);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+
+	public String delBook(Book book) {
+		Book[] temp = new Book[1];
+		temp[0] = book;
+		Envelope<Book[]> envelope = new Envelope<Book[]>("DELETE_BOOK", temp);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String addCustomer(Customer customer) {
+		Envelope<Customer> envelope = new Envelope<Customer>("NEW_CUSTOMER", customer);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String modCustomer(Customer customer) {
+		Envelope<Customer> envelope = new Envelope<Customer>("UPDATE_CUSTOMER", customer);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String addCategory(Category category) {
+		Category[] temp = new Category[1];
+		temp[0] = category;
+		Envelope<Category[]> envelope = new Envelope<Category[]>("NEW_BOOK", temp);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String modCategory(Category category) {
+		Category[] temp = new Category[1];
+		temp[0] = category;
+		Envelope<Category[]> envelope = new Envelope<Category[]>("UPDATE_BOOK", temp);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String addUser(User user) {
+		Envelope<User> envelope = new Envelope<User>("NEW_EMPLOYEE", user);
+		System.out.println(gson.toJson(envelope));
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
+	public String modUser(User user) {
+		Envelope<User> envelope = new Envelope<User>("UPDATE_EMPLOYEE", user);
+		out.append(gson.toJson(envelope) + "\n");
+		out.flush();
+		String input = "";
+		try {
+			input = in.readLine();
+			System.out.println(input);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return input;
+	}
+	
 }

@@ -2,22 +2,28 @@ package application;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.Customer;
 import clientBiblioteca.User;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -241,19 +247,81 @@ public class CommessoController {
 	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
-		main.setRestituisciScene(user);
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
+			return;
+		ArrayList<Customer> trovati = new ArrayList<Customer>();
+		ArrayList<Customer> customers = client.getCustomersList();
+		for (Customer c : customers)
+			if (c.getSurname().toLowerCase().contains(cognome))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+			return;
+		} else {
+			Customer customer = dialogOptionListCustomer(trovati);
+			if (customer == null) 
+				return;
+			main.setRestituisciScene(user, customer);
+		}
+	}
+
+	// ritorna una stringa
+	private String dialogReturnsCognome() {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Inserisci il cognome");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Inserisci il cognome");
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent())
+			return result.get().toLowerCase();
+		else
+			return null;
+	}
+
+	// alert di errore
+	private void nessunUtenteTrovato() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Nesun utente trovato");
+		alert.setHeaderText(null);
+		alert.setContentText("Nessun utente trovato");
+		alert.showAndWait();
+	}
+
+	// ritorna un utente data una sottostringa del cognome
+	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
+		ArrayList<String> utenti = new ArrayList<String>();
+		for (Customer c : trovati)
+			utenti.add(c.toString());
+		List<String> choices = utenti;
+
+		ChoiceDialog<String> dialog = new ChoiceDialog<String>("---", choices);
+		dialog.setTitle("Scegli un utente");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Scegli un utente");
+
+		String temp;
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			temp = result.get();
+			for (Customer c : trovati) {
+				if (c.toString().equals(temp))
+					return c;
+			}
+		}
+		return null;
 	}
 
 	// passa a amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
-		main.setAmministrazioneScene();
+		main.setAmministrazioneScene(user);
 	}
 
 	// passa a commessoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		System.out.println("profilo commesso");
+		main.setCommessoProfiloScene(user);
 	}
 
 	// passa a publicScene

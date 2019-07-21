@@ -5,9 +5,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
 import clientBiblioteca.Book;
 import clientBiblioteca.Category;
 import clientBiblioteca.Client;
+import clientBiblioteca.Customer;
+import clientBiblioteca.Envelope;
 import clientBiblioteca.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -39,6 +47,15 @@ public class AmministrazioneController {
 
 	@FXML
 	private TextField t7;
+
+	@FXML
+	private TextField t9;
+
+	@FXML
+	private TextField t10;
+
+	@FXML
+	private TextField t11;
 
 	@FXML
 	private MenuItem restituisciMenuItem;
@@ -89,6 +106,15 @@ public class AmministrazioneController {
 	private Label l8;
 
 	@FXML
+	private Label l9;
+
+	@FXML
+	private Label l10;
+
+	@FXML
+	private Label l11;
+
+	@FXML
 	private Label delUtente;
 
 	@FXML
@@ -115,19 +141,33 @@ public class AmministrazioneController {
 	@FXML
 	private Label delCommesso;
 
-	boolean utente;
-
 	boolean mod;
 
 	private Main main;
 
 	private Client client;
 
+	private User user;
+
+	private enum operazione {
+		ADD_UTENTE, MOD_UTENTE, DEL_UTENTE, ADD_LIBRO, MOD_LIBRO, DEL_LIBRO, ADD_COMMESSO, MOD_COMMESSO, DEL_COMMESSO
+	}
+
+	private operazione op;
+
+	private Gson gson;
+
 	public void setMain(Main m) {
 		this.main = m;
 		this.client = m.client;
+		gson = new GsonBuilder().create();
 	}
 
+	public void setUser(User user) {
+		this.user = user;
+		init();
+	}
+	
 	// inizializza la scena
 	public void init() {
 		l1.setVisible(false);
@@ -146,6 +186,12 @@ public class AmministrazioneController {
 		t7.setVisible(false);
 		l8.setVisible(false);
 		t8.setVisible(false);
+		l9.setVisible(false);
+		t9.setVisible(false);
+		l10.setVisible(false);
+		t10.setVisible(false);
+		l11.setVisible(false);
+		t11.setVisible(false);
 		inviaButton.setVisible(false);
 		inviaButton.setDisable(true);
 	}
@@ -153,8 +199,8 @@ public class AmministrazioneController {
 	// aggiunge un nuovo utente
 	@FXML
 	void addUtenteReleased(MouseEvent event) {
-		utente = true;
-		mod = false;
+		op = operazione.ADD_UTENTE;
+		init();
 		l1.setText("Username	");
 		l1.setVisible(true);
 		t1.setText("");
@@ -176,37 +222,307 @@ public class AmministrazioneController {
 		l5.setVisible(true);
 		t5.setText("");
 		t5.setVisible(true);
-		l6.setVisible(false);
-		t6.setVisible(false);
-		l7.setVisible(false);
-		t7.setVisible(false);
-		l8.setVisible(false);
-		t8.setVisible(false);
 		inviaButton.setDisable(false);
 		inviaButton.setVisible(true);
 	}
 
-	// modificaun utente
+	// modifica un utente
 	@FXML
 	void modUtenteReleased(MouseEvent event) {
-		utente = true;
-		mod = true;
+		op = operazione.MOD_UTENTE;
 		String cognome = dialogReturnsCognome();
 		if (cognome == null)
 			return;
-		// cerca il nome tra i cognomi della gente con for ecc in un arraylist di user
+		ArrayList<Customer> trovati = new ArrayList<Customer>();
+		for (Customer c : client.getCustomersList())
+			if (c.getSurname().toLowerCase().contains(cognome))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+		} else {
+			Customer customer = dialogOptionListCustomer(trovati);
+			if (customer == null)
+				return;
+			init();
+			l1.setText("Username	");
+			l1.setVisible(true);
+			t1.setText(customer.getUsername());
+			t1.setEditable(false);
+			t1.setVisible(true);
+			l2.setText("Password		");
+			l2.setVisible(true);
+			t2.setText(customer.getPassword());
+			t2.setVisible(true);
+			l3.setText("Nome		");
+			l3.setVisible(true);
+			t3.setText(customer.getName());
+			t3.setVisible(true);
+			l4.setText("Cognome		");
+			l4.setVisible(true);
+			t4.setText(customer.getSurname());
+			t4.setVisible(true);
+			l5.setText("E-mail		");
+			l5.setVisible(true);
+			t5.setText(customer.getE_mail());
+			t5.setVisible(true);
+			inviaButton.setDisable(false);
+			inviaButton.setVisible(true);
+		}
+	}
+
+	// elimina un utente
+	@FXML
+	void delUtenteReleased(MouseEvent event) {
+		op = operazione.DEL_UTENTE;
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
+			return;
+		ArrayList<Customer> trovati = new ArrayList<Customer>();
+		for (Customer c : client.getCustomersList())
+			if (c.getSurname().toLowerCase().contains(cognome))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+		} else {
+			Customer customer = dialogOptionListCustomer(trovati);
+			if (customer == null)
+				return;
+			init();
+			if (sicuroElimina()) {
+				String x = client.delCustomer(customer.getUsername());
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					delConfermata();
+					client.refreshDB();
+				}
+			}
+		}
+	}
+
+	// aggiunge un nuovo libro
+	@FXML
+	void addLibroReleased(MouseEvent event) {
+		op = operazione.ADD_LIBRO;
+		init();
+		l1.setText("Titolo		");
+		l1.setVisible(true);
+		t1.setText("");
+		t1.setVisible(true);
+		t1.setEditable(true);
+		l2.setText("Autore		");
+		l2.setVisible(true);
+		t2.setText("");
+		t2.setVisible(true);
+		l3.setText("Pagine		");
+		l3.setVisible(true);
+		t3.setText("");
+		t3.setVisible(true);
+		l4.setText("Editore		");
+		l4.setVisible(true);
+		t4.setText("");
+		t4.setVisible(true);
+		l5.setText("Lingua		");
+		l5.setVisible(true);
+		t5.setText("");
+		t5.setVisible(true);
+		l6.setText("ISBN			");
+		l6.setVisible(true);
+		t6.setText("");
+		t6.setVisible(true);
+		t6.setEditable(true);
+		l7.setText("Categoria		");
+		l7.setVisible(true);
+		t7.setText("");
+		t7.setVisible(true);
+		l8.setText("Descrizione	");
+		l8.setVisible(true);
+		t8.setText("");
+		t8.setVisible(true);
+		l9.setText("Prestabile per (giorni)	");
+		l9.setVisible(true);
+		t9.setText("");
+		t9.setVisible(true);
+		l10.setText("Incremento/giorno		");
+		l10.setVisible(true);
+		t10.setText("");
+		t10.setVisible(true);
+		l11.setText("Copertina (.jpg)		");
+		l11.setVisible(true);
+		t11.setText("");
+		t11.setVisible(true);
+		inviaButton.setDisable(false);
+		inviaButton.setVisible(true);
+	}
+
+	// modifica un libro
+	@FXML
+	void modLibroReleased(MouseEvent event) {
+		op = operazione.MOD_LIBRO;
+		String titolo = dialogReturnsTitolo();
+		if (titolo == null)
+			return;
+		ArrayList<Book> trovati = new ArrayList<Book>();
+		for (Category c : client.getCategoryList()) {
+			for (Book b : c.getBooks()) {
+				if (b.getTitle().toLowerCase().contains(titolo)) {
+					trovati.add(b);
+				}
+			}
+		}
+		if (trovati.isEmpty()) {
+			nessunLibroTrovato();
+		} else {
+			Book book = dialogOptionListBook(trovati);
+			if (book == null)
+				return;
+			Category category = null;
+			for (Category c : client.getCategoryList()) {
+				for (Book b : c.getBooks()) {
+					if (b.equals(book)) {
+						category = c;
+					}
+				}
+			}
+			init();
+			l1.setText("Titolo		");
+			l1.setVisible(true);
+			t1.setText(book.getTitle());
+			t1.setVisible(true);
+			l2.setText("Autore		");
+			l2.setVisible(true);
+			t2.setText(book.getAuthor());
+			t2.setVisible(true);
+			l3.setText("Pagine		");
+			l3.setVisible(true);
+			t3.setText(Integer.toString(book.getnPages()));
+			t3.setVisible(true);
+			l4.setText("Editore		");
+			l4.setVisible(true);
+			t4.setText(book.getPublisher());
+			t4.setVisible(true);
+			l5.setText("Lingua		");
+			l5.setVisible(true);
+			t5.setText(book.getLanguage());
+			t5.setVisible(true);
+			l6.setText("ISBN			");
+			l6.setVisible(true);
+			t6.setText(Integer.toString(book.getISBN()));
+			t6.setVisible(true);
+			t6.setEditable(false);
+			l7.setText("Categoria		");
+			l7.setVisible(true);
+			t7.setText(category.getCategoryType());
+			t7.setVisible(true);
+			l8.setText("Descrizione	");
+			l8.setVisible(true);
+			t8.setText(book.getDescription());
+			t8.setVisible(true);
+			l9.setText("Prestabile per (giorni)	");
+			l9.setVisible(true);
+			t9.setText(Integer.toString(book.getLendingPeriod()));
+			t9.setVisible(true);
+			l10.setText("Incremento/giorno		");
+			l10.setVisible(true);
+			t10.setText(Integer.toString(book.getFineIncrement()));
+			t10.setVisible(true);
+			l11.setText("Copertina (.jpg)		");
+			l11.setVisible(true);
+			t11.setText(book.getImage());
+			t11.setVisible(true);
+			inviaButton.setDisable(false);
+			inviaButton.setVisible(true);
+		}
+	}
+
+	// elimina un libro
+	@FXML
+	void delLibroReleased(MouseEvent event) {
+		op = operazione.DEL_LIBRO;
+		String titolo = dialogReturnsTitolo();
+		if (titolo == null)
+			return;
+		ArrayList<Book> trovati = new ArrayList<Book>();
+		for (Category c : client.getCategoryList()) {
+			for (Book b : c.getBooks()) {
+				if (b.getTitle().toLowerCase().contains(titolo)) {
+					trovati.add(b);
+				}
+			}
+		}
+		if (trovati.isEmpty()) {
+			nessunLibroTrovato();
+		} else {
+			Book book = dialogOptionListBook(trovati);
+			if (book == null)
+				return;
+			init();
+			if (sicuroElimina()) {
+				String x = client.delBook(book);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					alertSuccesso();
+					client.refreshDB();
+				}
+			}
+		}
+	}
+
+	// aggiunge un nuovo libro
+	@FXML
+	void addCommessoReleased(MouseEvent event) {
+		op = operazione.ADD_COMMESSO;
+		init();
+		l1.setText("Username	");
+		l1.setVisible(true);
+		t1.setText("");
+		t1.setVisible(true);
+		t1.setEditable(true);
+		l2.setText("Password		");
+		l2.setVisible(true);
+		t2.setText("");
+		t2.setVisible(true);
+		l3.setText("Nome		");
+		l3.setVisible(true);
+		t3.setText("");
+		t3.setVisible(true);
+		l4.setText("Cognome		");
+		l4.setVisible(true);
+		t4.setText("");
+		t4.setVisible(true);
+		l5.setText("E-mail		");
+		l5.setVisible(true);
+		t5.setText("");
+		t5.setVisible(true);
+		inviaButton.setDisable(false);
+		inviaButton.setVisible(true);
+	}
+
+	// modifica un libro
+	@FXML
+	void modCommessoReleased(MouseEvent event) {
+		op = operazione.MOD_COMMESSO;
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
+			return;
 		ArrayList<User> trovati = new ArrayList<User>();
-		// for tutti gli user
-		User aCaso = new User("Alfredo", "ciao", "Alfredo", "Aloi", "alfreduzzo@a.j");
-		if (aCaso.getSurname().toLowerCase().contains(cognome))
-			trovati.add(aCaso);
+		for (User c : client.getEmployeesList())
+			if (c.getSurname().toLowerCase().contains(cognome) && !c.getUsername().equals(user.getUsername()))
+				trovati.add(c);
 		if (trovati.isEmpty()) {
 			nessunUtenteTrovato();
 		} else {
 			User user = dialogOptionListUser(trovati);
 			if (user == null)
 				return;
-			System.out.println(user);
+			init();
 			l1.setText("Username	");
 			l1.setVisible(true);
 			t1.setText(user.getUsername());
@@ -228,274 +544,6 @@ public class AmministrazioneController {
 			l5.setVisible(true);
 			t5.setText(user.getE_mail());
 			t5.setVisible(true);
-			l6.setVisible(false);
-			t6.setVisible(false);
-			l7.setVisible(false);
-			t7.setVisible(false);
-			l8.setVisible(false);
-			t8.setVisible(false);
-			inviaButton.setDisable(false);
-			inviaButton.setVisible(true);
-		}
-	}
-
-	// elimina un utente
-	@FXML
-	void delUtenteReleased(MouseEvent event) {
-		String cognome = dialogReturnsCognome();
-		// cerca il nome tra i cognomi della gente con for ecc in un arraylist di user
-		ArrayList<User> trovati = new ArrayList<User>();
-		// for tutti gli user
-		User aCaso = new User("Alfredo", "ciao", "Alfredo", "Aloi", "alfreduzzo@a.j");
-		if (aCaso.getSurname().toLowerCase().contains(cognome))
-			trovati.add(aCaso);
-		if (trovati.isEmpty()) {
-			nessunUtenteTrovato();
-		} else {
-			User user = dialogOptionListUser(trovati);
-			if (user == null)
-				return;
-			if (sicuroElimina())
-				delConfermata();
-			// delete user
-			else
-				System.out.println(user + " non eliminato");
-		}
-	}
-
-	// aggiunge un nuovo libro
-	@FXML
-	void addLibroReleased(MouseEvent event) {
-		utente = false;
-		mod = false;
-		l1.setText("Titolo		");
-		l1.setVisible(true);
-		t1.setText("");
-		t1.setVisible(true);
-		t1.setEditable(true);
-		l2.setText("Autore		");
-		l2.setVisible(true);
-		t2.setText("");
-		t2.setVisible(true);
-		l3.setText("Pagine		");
-		l3.setVisible(true);
-		t3.setText("");
-		t3.setVisible(true);
-		l4.setText("Editore		");
-		l4.setVisible(true);
-		t4.setText("");
-		t4.setVisible(true);
-		l5.setText("Lingua		");
-		l5.setVisible(true);
-		t5.setText("");
-		t5.setVisible(true);
-		l6.setText("ISBN			");
-		l6.setVisible(true);
-		t6.setText("");
-		t6.setVisible(true);
-		t6.setEditable(true);
-		l7.setText("Categoria		");
-		l7.setVisible(true);
-		t7.setText("");
-		t7.setVisible(true);
-		l8.setText("Descrizione	");
-		l8.setVisible(true);
-		t8.setText("");
-		t8.setVisible(true);
-		inviaButton.setDisable(false);
-		inviaButton.setVisible(true);
-	}
-
-	// modifica un libro
-	@FXML
-	void modLibroReleased(MouseEvent event) {
-		utente = false;
-		mod = true;
-		String titolo = dialogReturnsTitolo();
-		if (titolo == null)
-			return;
-		// cerca il titolo tra i titoli dedei libri
-		ArrayList<Book> trovati = new ArrayList<Book>();
-		for (Category c : client.getCategoryList()) {
-			for (Book b : c.getBooks()) {
-				if (b.getTitle().toLowerCase().contains(titolo)) {
-					trovati.add(b);
-				}
-			}
-		}
-		if (trovati.isEmpty()) {
-			nessunLibroTrovato();
-		} else {
-			Book book = dialogOptionListBook(trovati);
-			if (book == null)
-				return;
-			l1.setText("Titolo		");
-			l1.setVisible(true);
-			t1.setText(book.getTitle());
-			t1.setVisible(true);
-			l2.setText("Autore		");
-			l2.setVisible(true);
-			t2.setText(book.getAuthor());
-			t2.setVisible(true);
-			l3.setText("Pagine		");
-			l3.setVisible(true);
-			t3.setText(Integer.toString(book.getnPages()));
-			t3.setVisible(true);
-			l4.setText("Editore		");
-			l4.setVisible(true);
-			t4.setText(book.getPublisher());
-			t4.setVisible(true);
-			l5.setText("Lingua		");
-			l5.setVisible(true);
-			t5.setText(book.getLanguage());
-			t5.setVisible(true);
-			l6.setText("ISBN			");
-			l6.setVisible(true);
-			t6.setText(Integer.toString(book.getISBN()));
-			t6.setVisible(true);
-			t6.setEditable(false);
-			l7.setText("Categoria		");
-			l7.setVisible(true);
-			t7.setText("ATTENZIONE, NON LO SO!!!!");
-			t7.setVisible(true);
-			l8.setText("Descrizione	");
-			l8.setVisible(true);
-			t8.setText(book.getDescription());
-			t8.setVisible(true);
-			inviaButton.setDisable(false);
-			inviaButton.setVisible(true);
-		}
-	}
-
-	// elimina un libro
-	@FXML
-	void delLibroReleased(MouseEvent event) {
-		String titolo = dialogReturnsTitolo();
-		if (titolo == null)
-			return;
-		// cerca il titolo tra i titoli dedei libri
-		ArrayList<Book> trovati = new ArrayList<Book>();
-		for (Category c : client.getCategoryList()) {
-			for (Book b : c.getBooks()) {
-				if (b.getTitle().toLowerCase().contains(titolo)) {
-					trovati.add(b);
-				}
-			}
-		}
-		if (trovati.isEmpty()) {
-			nessunLibroTrovato();
-		} else {
-			Book book = dialogOptionListBook(trovati);
-			if (book == null)
-				return;
-			if (sicuroElimina())
-				delConfermata();
-			// delete
-			else
-				System.out.println(book + " non eliminato");
-
-		}
-	}
-
-	// aggiunge un nuovo libro
-	@FXML
-	void addCommessoReleased(MouseEvent event) {
-		utente = false;
-		mod = false;
-		l1.setText("Titolo		");
-		l1.setVisible(true);
-		t1.setText("");
-		t1.setVisible(true);
-		t1.setEditable(true);
-		l2.setText("Autore		");
-		l2.setVisible(true);
-		t2.setText("");
-		t2.setVisible(true);
-		l3.setText("Pagine		");
-		l3.setVisible(true);
-		t3.setText("");
-		t3.setVisible(true);
-		l4.setText("Editore		");
-		l4.setVisible(true);
-		t4.setText("");
-		t4.setVisible(true);
-		l5.setText("Lingua		");
-		l5.setVisible(true);
-		t5.setText("");
-		t5.setVisible(true);
-		l6.setText("ISBN			");
-		l6.setVisible(true);
-		t6.setText("");
-		t6.setVisible(true);
-		t6.setEditable(true);
-		l7.setText("Categoria		");
-		l7.setVisible(true);
-		t7.setText("");
-		t7.setVisible(true);
-		l8.setText("Descrizione	");
-		l8.setVisible(true);
-		t8.setText("");
-		t8.setVisible(true);
-		inviaButton.setDisable(false);
-		inviaButton.setVisible(true);
-	}
-
-	// modifica un libro
-	@FXML
-	void modCommessoReleased(MouseEvent event) {
-		utente = false;
-		mod = true;
-		String titolo = dialogReturnsTitolo();
-		if (titolo == null)
-			return;
-		// cerca il titolo tra i titoli dedei libri
-		ArrayList<Book> trovati = new ArrayList<Book>();
-		for (Category c : client.getCategoryList()) {
-			for (Book b : c.getBooks()) {
-				if (b.getTitle().toLowerCase().contains(titolo)) {
-					trovati.add(b);
-				}
-			}
-		}
-		if (trovati.isEmpty()) {
-			nessunLibroTrovato();
-		} else {
-			Book book = dialogOptionListBook(trovati);
-			if (book == null)
-				return;
-			l1.setText("Titolo		");
-			l1.setVisible(true);
-			t1.setText(book.getTitle());
-			t1.setVisible(true);
-			l2.setText("Autore		");
-			l2.setVisible(true);
-			t2.setText(book.getAuthor());
-			t2.setVisible(true);
-			l3.setText("Pagine		");
-			l3.setVisible(true);
-			t3.setText(Integer.toString(book.getnPages()));
-			t3.setVisible(true);
-			l4.setText("Editore		");
-			l4.setVisible(true);
-			t4.setText(book.getPublisher());
-			t4.setVisible(true);
-			l5.setText("Lingua		");
-			l5.setVisible(true);
-			t5.setText(book.getLanguage());
-			t5.setVisible(true);
-			l6.setText("ISBN			");
-			l6.setVisible(true);
-			t6.setText(Integer.toString(book.getISBN()));
-			t6.setVisible(true);
-			t6.setEditable(false);
-			l7.setText("Categoria		");
-			l7.setVisible(true);
-			t7.setText("ATTENZIONE, NON LO SO!!!!");
-			t7.setVisible(true);
-			l8.setText("Descrizione	");
-			l8.setVisible(true);
-			t8.setText(book.getDescription());
-			t8.setVisible(true);
 			inviaButton.setDisable(false);
 			inviaButton.setVisible(true);
 		}
@@ -504,37 +552,39 @@ public class AmministrazioneController {
 	// elimina un libro
 	@FXML
 	void delCommessoReleased(MouseEvent event) {
-		String titolo = dialogReturnsTitolo();
-		if (titolo == null)
+		op = operazione.DEL_COMMESSO;
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
 			return;
-		// cerca il titolo tra i titoli dedei libri
-		ArrayList<Book> trovati = new ArrayList<Book>();
-		for (Category c : client.getCategoryList()) {
-			for (Book b : c.getBooks()) {
-				if (b.getTitle().toLowerCase().contains(titolo)) {
-					trovati.add(b);
+		ArrayList<User> trovati = new ArrayList<User>();
+		for (User c : client.getEmployeesList())
+			if (c.getSurname().toLowerCase().contains(cognome) && !c.getUsername().equals(user.getUsername()))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+		} else {
+			User user = dialogOptionListUser(trovati);
+			if (user == null)
+				return;
+			init();
+			if (sicuroElimina()) {
+				String x = client.delUser(user.getUsername());
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					delConfermata();
+					client.refreshDB();
 				}
 			}
-		}
-		if (trovati.isEmpty()) {
-			nessunLibroTrovato();
-		} else {
-			Book book = dialogOptionListBook(trovati);
-			if (book == null)
-				return;
-			if (sicuroElimina())
-				delConfermata();
-			// delete
-			else
-				System.out.println(book + " non eliminato");
-
 		}
 	}
 
 	@FXML
 	void inviaReleased(MouseEvent event) {
-		// aggiungi utente
-		if (utente && !mod) {
+		if (op == operazione.ADD_UTENTE) {
 			String username = t1.getText();
 			String password = t2.getText();
 			String nome = t3.getText();
@@ -543,14 +593,25 @@ public class AmministrazioneController {
 
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
 				campoNullo();
+			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
+				emailNonValida();
 			else {
-				User user = new User(username, password, nome, cognome, email);
-				utenteInserito(user.toString());
-				init();
-				System.out.println(user);
+				Customer customer = new Customer(username, password, nome, cognome, email, "");
+				String x = client.addCustomer(customer);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					utenteInserito(customer);
+					client.refreshDB();
+					init();
+				}
 			}
 		}
-		if (utente && mod) {
+
+		if (op == operazione.MOD_UTENTE) {
 			String username = t1.getText();
 			String password = t2.getText();
 			String nome = t3.getText();
@@ -559,15 +620,25 @@ public class AmministrazioneController {
 
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
 				campoNullo();
+			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
+				emailNonValida();
 			else {
-				// for ogni utente nel db, delete if username==user.username
-				User user = new User(username, password, nome, cognome, email);
-				utenteModificato(user.toString());
+				Customer customer = new Customer(username, password, nome, cognome, email, "");
+				String x = client.modCustomer(customer);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					utenteModificato(customer);
+					client.refreshDB();
+				}
 				init();
-				System.out.println(user.toString());
 			}
 		}
-		if (!utente && !mod) {
+
+		if (op == operazione.ADD_LIBRO) {
 			String titolo = t1.getText();
 			String autore = t2.getText();
 			String pagine = t3.getText();
@@ -576,21 +647,44 @@ public class AmministrazioneController {
 			String ISBN = t6.getText();
 			String categoria = t7.getText();
 			String descrizione = t8.getText();
+			String prestabile = t9.getText();
+			String fineIncr = t10.getText();
+			String immagine = t11.getText();
+			boolean ok = false;
+			for (String s : client.getImageReceiver().getImageNames()) {
+				if (s.equals(immagine))
+					ok = true;
+			}
 			if (titolo.equals("") || autore.equals("") || pagine.equals("") || editore.equals("") || lingua.equals("")
-					|| ISBN.equals("") || categoria.equals("") || descrizione.equals(""))
+					|| ISBN.equals("") || categoria.equals("") || descrizione.equals("") || prestabile.equals("")
+					|| fineIncr.equals("") || immagine.equals(""))
 				campoNullo();
-			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN))
+			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN)
+					|| !Pattern.matches("\\d*", prestabile) || !Pattern.matches("\\d*", fineIncr))
 				noNumero();
+			else if (!ok)
+				immagineNonTrovata(immagine);
 			else {
-				// for ogni utente nel db, delete if username==user.username
-//			//	Book book = new Book(titolo, autore, Integer.parseInt(pagine), editore, lingua, descrizione,
-//						Integer.parseInt(ISBN));
-//				System.out.println(book);
-//				libroInserito(book.toString());
-//				init();
+				Category category = new Category(categoria);
+				Book[] temp = new Book[1];
+				temp[0] = new Book(0, titolo, autore, Integer.parseInt(pagine), editore, lingua, descrizione,
+						Integer.parseInt(ISBN), 0, immagine, Integer.parseInt(prestabile), Integer.parseInt(fineIncr));
+				category.setBooks(temp);
+				String x = client.addCategory(category);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					libroInserito(temp[0]);
+					client.refreshDB();
+					init();
+				}
 			}
 		}
-		if (!utente && mod) {
+
+		if (op == operazione.MOD_LIBRO) {
 			String titolo = t1.getText();
 			String autore = t2.getText();
 			String pagine = t3.getText();
@@ -599,22 +693,134 @@ public class AmministrazioneController {
 			String ISBN = t6.getText();
 			String categoria = t7.getText();
 			String descrizione = t8.getText();
+			String prestabile = t9.getText();
+			String fineIncr = t10.getText();
+			String immagine = t11.getText();
+			boolean ok = false;
+			for (String s : client.getImageReceiver().getImageNames()) {
+				if (s.equals(immagine))
+					ok = true;
+			}
 			if (titolo.equals("") || autore.equals("") || pagine.equals("") || editore.equals("") || lingua.equals("")
-					|| ISBN.equals("") || categoria.equals("") || descrizione.equals(""))
+					|| ISBN.equals("") || categoria.equals("") || descrizione.equals("") || prestabile.equals("")
+					|| fineIncr.equals("") || immagine.equals(""))
 				campoNullo();
-			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN))
+			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN)
+					|| !Pattern.matches("\\d*", prestabile) || !Pattern.matches("\\d*", fineIncr))
 				noNumero();
+			else if (!ok)
+				immagineNonTrovata(immagine);
 			else {
-//				Book book = new Book(titolo, autore, Integer.parseInt(pagine), editore, lingua, descrizione,
-//						Integer.parseInt(ISBN));
-//				System.out.println(book);
-//				libroModificato(book.toString());
-//				init();
+				Category category = new Category(categoria);
+				Book[] temp = new Book[1];
+				temp[0] = new Book(0, titolo, autore, Integer.parseInt(pagine), editore, lingua, descrizione,
+						Integer.parseInt(ISBN), 0, immagine, Integer.parseInt(prestabile), Integer.parseInt(fineIncr));
+				category.setBooks(temp);
+				String x = client.modCategory(category);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					libroModificato(temp[0]);
+					client.refreshDB();
+					init();
+				}
+			}
+		}
+
+		if (op == operazione.ADD_COMMESSO) {
+			String username = t1.getText();
+			String password = t2.getText();
+			String nome = t3.getText();
+			String cognome = t4.getText();
+			String email = t5.getText();
+
+			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
+				campoNullo();
+			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
+				emailNonValida();
+			else {
+				User user = new User(username, password, nome, cognome, email);
+				String x = client.addUser(user);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					utenteInserito(user);
+					client.refreshDB();
+				}
+				init();
+			}
+		}
+
+		if (op == operazione.MOD_COMMESSO) {
+			String username = t1.getText();
+			String password = t2.getText();
+			String nome = t3.getText();
+			String cognome = t4.getText();
+			String email = t5.getText();
+
+			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
+				campoNullo();
+			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
+				emailNonValida();
+			else {
+				User user = new User(username, password, nome, cognome, email);
+				String x = client.modUser(user);
+				JsonObject jsonObject = new JsonParser().parse(x).getAsJsonObject();
+				if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
+					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
+					}.getType());
+					alertErrore(reportEnvelope.getContent());
+				} else {
+					utenteModificato(user);
+					client.refreshDB();
+				}
+				init();
 			}
 		}
 	}
 
+	private void emailNonValida() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Errore");
+		alert.setHeaderText(null);
+		alert.setContentText("E-mail non valida");
+		alert.showAndWait();
+	}
+
+	private void immagineNonTrovata(String x) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Errore");
+		alert.setHeaderText(null);
+		alert.setContentText("Immagine " + x + " non trovata nel server");
+		alert.showAndWait();
+	}
+
+	// alert di input
+	private void alertSuccesso() {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Successo");
+		alert.setHeaderText(null);
+		alert.setContentText("Operazione eseguita con successo");
+		alert.showAndWait();
+	}
+
 	// alert di errore
+	private void alertErrore(String error) {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Errore");
+		alert.setHeaderText(null);
+		alert.setContentText(error);
+		alert.showAndWait();
+	}
+
+	// alert di errore
+
 	private void campoNullo() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Errore nell'inserimento dei dati");
@@ -624,6 +830,7 @@ public class AmministrazioneController {
 	}
 
 	// alert di info
+
 	private void delConfermata() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
 		alert.setTitle("Eliminato");
@@ -633,52 +840,43 @@ public class AmministrazioneController {
 	}
 
 	// alert di info
-	private void utenteInserito(String x) {
+
+	private void utenteInserito(User x) {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Utente inserito");
 		alert.setHeaderText(null);
-		alert.setContentText("L'utente " + x + " e' stato aggiunto con successo!");
+		alert.setContentText("L'utente " + x.toString() + " e' stato aggiunto con successo!");
 		alert.showAndWait();
 	}
 
 	// alert di info
-	private void utenteModificato(String x) {
+
+	private void utenteModificato(User user) {
 		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Utente inserito");
+		alert.setTitle("Utente modificato");
 		alert.setHeaderText(null);
-		alert.setContentText("L'utente " + x + " e' stato modificato con successo!");
+		alert.setContentText("L'utente " + user.toString() + " e' stato modificato con successo!");
 		alert.showAndWait();
 	}
 
 	// alert di info
-	private void libroInserito(String x) {
-		Alert alert = new Alert(AlertType.INFORMATION);
-		alert.setTitle("Libro inserito");
-		alert.setHeaderText(null);
-		alert.setContentText("Il libro " + x + " e' stato inserito con successo!");
-		alert.showAndWait();
-	}
 
-	// alert di info
-	private void libroModificato(String x) {
+	private void libroInserito(Book x) {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Libro inserito");
 		alert.setHeaderText(null);
-		alert.setContentText("Il libro " + x + " e' stato modificato con successo!");
+		alert.setContentText("Il libro " + x.toString() + " e' stato inserito con successo!");
 		alert.showAndWait();
 	}
 
-	// ritorna una stringa
-	private String dialogReturnsCognome() {
-		TextInputDialog dialog = new TextInputDialog();
-		dialog.setTitle("Inserisci il cognome");
-		dialog.setHeaderText(null);
-		dialog.setContentText("Inserisci il cognome");
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent())
-			return result.get().toLowerCase();
-		else
-			return null;
+	// alert di info
+
+	private void libroModificato(Book x) {
+		Alert alert = new Alert(AlertType.INFORMATION);
+		alert.setTitle("Libro inserito");
+		alert.setHeaderText(null);
+		alert.setContentText("Il libro " + x.toString() + " e' stato modificato con successo!");
+		alert.showAndWait();
 	}
 
 	// ritorna una stringa
@@ -695,10 +893,11 @@ public class AmministrazioneController {
 	}
 
 	// ritorna un utente data una sottostringa del cognome
+
 	private User dialogOptionListUser(ArrayList<User> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
-		for (User u : trovati)
-			utenti.add(u.toString());
+		for (User c : trovati)
+			utenti.add(c.toString());
 		List<String> choices = utenti;
 
 		ChoiceDialog<String> dialog = new ChoiceDialog<String>("---", choices);
@@ -710,15 +909,16 @@ public class AmministrazioneController {
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()) {
 			temp = result.get();
-			for (User u : trovati) {
-				if (u.toString().equals(temp))
-					return u;
+			for (User c : trovati) {
+				if (c.toString().equals(temp))
+					return c;
 			}
 		}
 		return null;
 	}
 
 	// ritorna un libro data la sottostringa del titolo
+
 	private Book dialogOptionListBook(ArrayList<Book> trovati) {
 		ArrayList<String> libri = new ArrayList<String>();
 		for (Book b : trovati)
@@ -742,15 +942,9 @@ public class AmministrazioneController {
 	}
 
 	// alert di errore
-	private void nessunUtenteTrovato() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Nesun utente trovato");
-		alert.setHeaderText(null);
-		alert.setContentText("Nessun utente trovato");
-		alert.showAndWait();
-	}
 
 	// alert di errore
+
 	private void nessunLibroTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Nesun libro trovato");
@@ -781,22 +975,83 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
-//		main.setRestituisciScene();
+		String cognome = dialogReturnsCognome();
+		if (cognome == null)
+			return;
+		ArrayList<Customer> trovati = new ArrayList<Customer>();
+		ArrayList<Customer> customers = client.getCustomersList();
+		for (Customer c : customers)
+			if (c.getSurname().toLowerCase().contains(cognome))
+				trovati.add(c);
+		if (trovati.isEmpty()) {
+			nessunUtenteTrovato();
+			return;
+		} else {
+			Customer customer = dialogOptionListCustomer(trovati);
+			if (customer == null)
+				return;
+			main.setRestituisciScene(user, customer);
+		}
+	}
+
+	// ritorna una stringa
+	private String dialogReturnsCognome() {
+		TextInputDialog dialog = new TextInputDialog();
+		dialog.setTitle("Inserisci il cognome");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Inserisci il cognome");
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent())
+			return result.get().toLowerCase();
+		else
+			return null;
+	}
+
+	// alert di errore
+	private void nessunUtenteTrovato() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("Nesun utente trovato");
+		alert.setHeaderText(null);
+		alert.setContentText("Nessun utente trovato");
+		alert.showAndWait();
+	}
+
+	// ritorna un utente data una sottostringa del cognome
+	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
+		ArrayList<String> utenti = new ArrayList<String>();
+		for (Customer c : trovati)
+			utenti.add(c.toString());
+		List<String> choices = utenti;
+
+		ChoiceDialog<String> dialog = new ChoiceDialog<String>("---", choices);
+		dialog.setTitle("Scegli un utente");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Scegli un utente");
+
+		String temp;
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()) {
+			temp = result.get();
+			for (Customer c : trovati) {
+				if (c.toString().equals(temp))
+					return c;
+			}
+		}
+		return null;
 	}
 
 	// passa a commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
-		// main.setCommessoScene(new ArrayList<Book>());
+		main.setCommessoScene(new ArrayList<Book>(), user);
 	}
 
 	// passa a utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
-		System.out.println("profilo");
+		main.setCommessoProfiloScene(user);
 	}
 
 	// passa a publicScene
