@@ -89,9 +89,6 @@ public class CommessoCarrelloController {
 	private Label bookDescr;
 
 	@FXML
-	private Label bookDueDate;
-
-	@FXML
 	private ImageView cercaButton;
 
 	@FXML
@@ -236,6 +233,8 @@ public class CommessoCarrelloController {
 			alert.showAndWait();
 		} else {
 			String cognome = dialogReturnsCognome();
+			if (cognome == null)
+				return;
 			ArrayList<Customer> trovati = new ArrayList<Customer>();
 			ArrayList<Customer> customers = client.getCustomersList();
 			for (Customer c : customers)
@@ -253,17 +252,16 @@ public class CommessoCarrelloController {
 					Envelope<String> reportEnvelope = gson.fromJson(x, new TypeToken<Envelope<String>>() {
 					}.getType());
 					alertErrore(reportEnvelope.getContent());
-				}
-				else {
+				} else {
 					alertSuccesso();
 				}
+				client.refreshDB();
+				carrello.clear();
+				stampaLibri(carrello);
 			}
 		}
-		client.refreshDB();
-		carrello.clear();
-		stampaLibri(carrello);
 	}
-	
+
 	// alert di input
 	private void alertSuccesso() {
 		Alert alert = new Alert(AlertType.INFORMATION);

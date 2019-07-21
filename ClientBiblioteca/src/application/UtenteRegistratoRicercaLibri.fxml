@@ -12,16 +12,16 @@
    <children>
       <SplitPane dividerPositions="0.25" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane maxWidth="200.0" minHeight="0.0" minWidth="200.0">
+          <AnchorPane maxWidth="250.0" minHeight="0.0" minWidth="250.0">
                <children>
                   <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </children>
             </AnchorPane>
-          <AnchorPane focusTraversable="true" minHeight="0.0" minWidth="0.0">
+          <AnchorPane focusTraversable="true" minHeight="0.0" minWidth="600.0">
                <children>
                   <BorderPane focusTraversable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <top>
-                        <HBox alignment="CENTER" focusTraversable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" BorderPane.alignment="CENTER_LEFT">
+                        <HBox alignment="CENTER" focusTraversable="true" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" BorderPane.alignment="CENTER_LEFT">
                            <children>
                               <TextField fx:id="cercaTextField" alignment="CENTER_RIGHT" maxHeight="25.0" maxWidth="300.0" minHeight="25.0" minWidth="100.0" onKeyPressed="#cercaTextFieldKeyPressed" prefHeight="25.0" prefWidth="200.0" promptText="cerca un libro..." HBox.hgrow="ALWAYS">
                                  <font>
@@ -65,9 +65,9 @@
                           <content>
                             <AnchorPane>
                                  <children>
-                                    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <VBox alignment="TOP_CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <HBox alignment="CENTER" spacing="100.0">
+                                          <HBox alignment="TOP_CENTER" spacing="100.0">
                                              <children>
                                                 <ImageView fx:id="bookImg" pickOnBounds="true" preserveRatio="true" />
                                                 <VBox alignment="TOP_CENTER" spacing="20.0">
@@ -76,38 +76,38 @@
                                                          <font>
                                                             <Font name="SansSerif Bold" size="20.0" />
                                                          </font></Label>
-                                                      <Label fx:id="bookISBN">
+                                                      <Label fx:id="bookISBN" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="SansSerif Regular" size="10.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="bookAuthor">
+                                                      <Label fx:id="bookAuthor" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="SansSerif Regular" size="18.0" />
                                                          </font></Label>
-                                                      <Label fx:id="bookPublisher">
+                                                      <Label fx:id="bookPublisher" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="System Italic" size="14.0" />
                                                          </font></Label>
-                                                      <Label fx:id="bookLang">
+                                                      <Label fx:id="bookLang" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="SansSerif Regular" size="14.0" />
                                                          </font></Label>
-                                                      <Label fx:id="bookPages">
+                                                      <Label fx:id="bookPages" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font></Label>
-                                                      <Label fx:id="nBooks">
+                                                      <Label fx:id="nBooks" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="lendingPeriod">
+                                                      <Label fx:id="lendingPeriod" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label fx:id="fineIncrement">
+                                                      <Label fx:id="fineIncrement" textAlignment="CENTER" wrapText="true">
                                                          <font>
                                                             <Font name="Ubuntu" size="12.0" />
                                                          </font>
@@ -135,14 +135,6 @@
                                              <font>
                                                 <Font name="SansSerif Regular" size="14.0" />
                                              </font></Label>
-                                          <Label alignment="CENTER" layoutY="1000.0" text="Contattaci inviando una mail a biblioteca@chiocciola.it - Cosenza, Via della Biblioteca, 1" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                                             <font>
-                                                <Font size="10.0" />
-                                             </font>
-                                             <VBox.margin>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                             </VBox.margin>
-                                          </Label>
                                        </children>
                                     </VBox>
                                  </children></AnchorPane>

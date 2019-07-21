@@ -12,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
+//button color = #077807
+
 public class Main extends Application {
 
 	Client client = new Client();
@@ -69,14 +71,15 @@ public class Main extends Application {
 		amministrazioneController.init();
 		stage.setScene(amministrazioneScene);
 	}
-	
+
 	public void setRestituisciScene(User user) {
 		stage.setScene(restituisciScene);
 		restituisciController.init(user);
 	}
-	
+
 	@Override
 	public void start(Stage primaryStage) {
+		// if client == null return;
 		stage = primaryStage;
 		try {
 			loader = new FXMLLoader(getClass().getResource("Public.fxml"));
@@ -112,20 +115,20 @@ public class Main extends Application {
 			restituisciController = loader.getController();
 			restituisciController.setMain(this);
 
-			publicScene = new Scene(rootPublic, 800, 600);
-			utenteRegistratoLibriNoleggiatiScene = new Scene(rootUtenteRegistratoLibriNoleggiati, 800, 600);
-			utenteRegistratoRicercaLibriScene = new Scene(rootUtenteRegistratoRicercaLibri, 800, 600);
-			utenteRegistratoProfiloScene = new Scene(rootUtenteRegistratoProfilo, 800, 600);
-			commessoScene = new Scene(rootCommesso, 800, 600);
-			commessoCarrelloScene = new Scene(rootCommessoCarrello, 800, 600);
-			amministrazioneScene = new Scene(rootAmministrazione, 800, 600);
-			restituisciScene = new Scene(rootRestituisci, 800, 600);
+			publicScene = new Scene(rootPublic, 1000, 600);
+			utenteRegistratoLibriNoleggiatiScene = new Scene(rootUtenteRegistratoLibriNoleggiati, 1000, 600);
+			utenteRegistratoRicercaLibriScene = new Scene(rootUtenteRegistratoRicercaLibri, 1000, 600);
+			utenteRegistratoProfiloScene = new Scene(rootUtenteRegistratoProfilo, 1000, 600);
+			commessoScene = new Scene(rootCommesso, 1000, 600);
+			commessoCarrelloScene = new Scene(rootCommessoCarrello, 1000, 600);
+			amministrazioneScene = new Scene(rootAmministrazione, 1000, 600);
+			restituisciScene = new Scene(rootRestituisci, 1000, 600);
 
 			setPublicScene();
 			primaryStage = stage;
-			primaryStage.setMinWidth(600);
-			primaryStage.setMinHeight(400);
-			primaryStage.setWidth(800);
+			primaryStage.setMinWidth(1000);
+			primaryStage.setMinHeight(600);
+			primaryStage.setWidth(1000);
 			primaryStage.setHeight(600);
 			primaryStage.show();
 

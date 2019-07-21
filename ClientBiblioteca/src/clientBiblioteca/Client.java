@@ -15,6 +15,8 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import imageReceiver.ImageReceiver;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.util.Pair;
 
 public class Client implements Runnable {
@@ -25,7 +27,7 @@ public class Client implements Runnable {
 	private ImageReceiver imageReceiver;
 	private BufferedReader in;
 	private PrintWriter out;
-
+	
 	public Client() {
 		try {
 			this.socket = new Socket("localhost", 8000);
@@ -37,7 +39,12 @@ public class Client implements Runnable {
 			Thread t = new Thread(this);
 			t.start();
 		} catch (IOException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Errore");
+			alert.setHeaderText(null);
+			alert.setContentText("Connessione al server fallita!");
+			alert.showAndWait();
 		}
 	}
 
@@ -112,10 +119,6 @@ public class Client implements Runnable {
 
 	public ArrayList<Category> getCategoryList() {
 		return categoryList;
-	}
-
-	public static void main(String[] args) {
-		Client c = new Client();
 	}
 
 	public String loginUser(Pair<String, String> login) {

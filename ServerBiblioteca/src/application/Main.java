@@ -14,6 +14,7 @@ public class Main extends Application {
 			AnchorPane root = (AnchorPane)FXMLLoader.load(getClass().getResource("Sample.fxml"));
 			Scene scene = new Scene(root,400,400);
 			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
+			primaryStage.setTitle("Server Biblioteca");
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			primaryStage.setOnCloseRequest(e->System.exit(0));

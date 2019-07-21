@@ -12,7 +12,7 @@
    <children>
       <BorderPane focusTraversable="true" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <HBox alignment="CENTER" focusTraversable="true" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" BorderPane.alignment="CENTER_LEFT">
+            <HBox alignment="CENTER" focusTraversable="true" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" BorderPane.alignment="CENTER">
                <children>
                   <Label alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="100.0" text="BIBLIOTECA" HBox.hgrow="ALWAYS">
                      <font>

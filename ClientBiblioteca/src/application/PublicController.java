@@ -297,6 +297,7 @@ public class PublicController {
 	// inizializza la scena
 	public void init() {
 		bookTitle.setText("Clicca su un libro per le informazioni");
+		client.refreshDB();
 		stampaCategorie(client.getCategoryList());
 		cercaTextField.setText("");
 	}

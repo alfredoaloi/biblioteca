@@ -71,9 +71,6 @@ public class CommessoController {
 	private Label bookDescr;
 
 	@FXML
-	private Label bookDueDate;
-
-	@FXML
 	private ImageView cercaButton;
 
 	@FXML

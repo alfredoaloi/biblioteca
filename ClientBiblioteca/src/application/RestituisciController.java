@@ -16,7 +16,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import clientBiblioteca.Book;
-import clientBiblioteca.Category;
 import clientBiblioteca.Client;
 import clientBiblioteca.Customer;
 import clientBiblioteca.Envelope;
@@ -27,6 +26,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -35,7 +35,6 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -79,9 +78,6 @@ public class RestituisciController {
 
 	@FXML
 	private Label bookDescr;
-
-	@FXML
-	private Label bookDueDate;
 
 	@FXML
 	private ImageView cercaButton;
@@ -152,11 +148,11 @@ public class RestituisciController {
 	public void stampaLibri(ArrayList<LentBook> noleggiati) {
 		tabPane.getTabs().clear();
 		if (noleggiati.isEmpty()) {
-			bookTitle.setText("Nessun libro nel carrello soddisfa i parametri");
+			bookTitle.setText("Nessun libro noleggiato soddisfa i parametri");
 		} else {
 			bookTitle.setText("Clicca su un libro per vederne le informazioni");
 		}
-		bookImg.setImage(null); // manca un metodo getImg() in Book;
+		bookImg.setImage(null);
 		bookISBN.setText(null);
 		bookAuthor.setText(null);
 		bookPublisher.setText(null);
@@ -214,7 +210,7 @@ public class RestituisciController {
 		else
 			giorniRimanenti
 					.setText(Long.toString(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + " giorni rimanenti");
-		multa.setText(Double.toString(book.getFine()));
+		multa.setText("Mora ad oggi: " + Double.toString(book.getFine()) + " euro");
 		restituisciButton.setDisable(false);
 		restituisciButton.setVisible(true);
 	}

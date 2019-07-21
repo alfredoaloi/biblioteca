@@ -62,9 +62,6 @@ public class UtenteRegistratoLibriNoleggiatiController {
 	private Label bookDescr;
 
 	@FXML
-	private Label bookDueDate;
-
-	@FXML
 	private ImageView cercaButton;
 
 	@FXML
@@ -192,7 +189,7 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		else
 			giorniRimanenti
 					.setText(Long.toString(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)) + " giorni rimanenti");
-		multa.setText(Double.toString(book.getFine()));
+		multa.setText("Mora ad oggi: " + Double.toString(book.getFine()) + " euro");
 	}
 
 	// passa alla utenteRegistratoProfiloScene
