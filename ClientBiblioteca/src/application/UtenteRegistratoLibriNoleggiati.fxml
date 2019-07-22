@@ -69,7 +69,7 @@
                                        <children>
                                           <HBox alignment="TOP_CENTER" spacing="100.0">
                                              <children>
-                                                <ImageView fx:id="bookImg" pickOnBounds="true" preserveRatio="true" />
+                                                <ImageView fx:id="bookImg" fitHeight="300.0" pickOnBounds="true" preserveRatio="true" />
                                                 <VBox alignment="TOP_CENTER" spacing="20.0">
                                                    <children>
                                                       <Label fx:id="bookTitle" text="Clicca su un libro per vederne le informazioni!" textAlignment="CENTER" wrapText="true">

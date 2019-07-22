@@ -67,7 +67,7 @@
                                        <children>
                                           <HBox alignment="CENTER" focusTraversable="true" spacing="100.0">
                                              <children>
-                                                <ImageView fx:id="bookImg" focusTraversable="true" pickOnBounds="true" preserveRatio="true" />
+                                                <ImageView fx:id="bookImg" fitHeight="300.0" focusTraversable="true" pickOnBounds="true" preserveRatio="true" />
                                                 <VBox alignment="TOP_CENTER" focusTraversable="true" spacing="20.0">
                                                    <children>
                                                       <Label fx:id="bookTitle" text="ciao1" textAlignment="CENTER" wrapText="true">
