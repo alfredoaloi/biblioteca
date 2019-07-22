@@ -30,6 +30,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -73,7 +74,7 @@ public class RestituisciController {
 	private TextField cercaTextField;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView cercaButton;
@@ -115,7 +116,6 @@ public class RestituisciController {
 		this.gson = new GsonBuilder().create();
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -123,13 +123,11 @@ public class RestituisciController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<LentBook> trovati = new ArrayList<LentBook>();
@@ -140,7 +138,6 @@ public class RestituisciController {
 		stampaLibri(trovati);
 	}
 
-	// stampa i libri nel carrello
 	public void stampaLibri(ArrayList<LentBook> noleggiati) {
 		tabPane.getTabs().clear();
 		if (noleggiati.isEmpty()) {
@@ -179,7 +176,6 @@ public class RestituisciController {
 		tabPane.getTabs().add(tab);
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(LentBook book) {
 		activeBook = book;
 		bookTitle.setText(book.getTitle());
@@ -211,7 +207,6 @@ public class RestituisciController {
 		restituisciButton.setVisible(true);
 	}
 
-	// inizializza la scena
 	public void init(User user, Customer customer) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		cercaTextField.setText("");
@@ -222,7 +217,6 @@ public class RestituisciController {
 		stampaLibri(client.libriNoleggiati(customer.getUsername()));
 	}
 
-	//alert di input
 	private void alertSuccesso() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Successo");
@@ -231,7 +225,6 @@ public class RestituisciController {
 		alert.showAndWait();
 	}
 
-	// alert di errore
 	private void alertErrore(String error) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Errore");
@@ -257,25 +250,21 @@ public class RestituisciController {
 		}
 	}
 
-	// passa alla amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
 		main.setAmministrazioneScene(user);
 	}
 
-	// passa alla
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setCommessoProfiloScene(user);
 	}
 
-	// passa alla commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
 		main.setCommessoScene(new ArrayList<Book>(), user);
 	}
 
-	// passa alla publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

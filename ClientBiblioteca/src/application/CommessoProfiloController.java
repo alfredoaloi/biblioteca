@@ -54,7 +54,6 @@ public class CommessoProfiloController {
 		client = m.client;
 	}
 
-	// inizializza la scena
 	public void init(User c) {
 		user = c;
 		usernameLabel.setText("Username:	" + c.getUsername());
@@ -63,13 +62,11 @@ public class CommessoProfiloController {
 		emailLabel.setText("E-mail:		" + c.getE_mail());
 	}
 
-	// passa alla UtenteRegistratoLibriNoleggiariScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
 		main.setAmministrazioneScene(user);
 	}
 
-	// passa alla UtenteRegistratoRicercaLibriScene
 	@FXML
 	void homePressed(ActionEvent event) {
 		main.setCommessoScene(new ArrayList<Book>(), user);
@@ -96,7 +93,6 @@ public class CommessoProfiloController {
 		}
 	}
 
-	// ritorna una stringa
 	private String dialogReturnsCognome() {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Inserisci il cognome");
@@ -109,16 +105,14 @@ public class CommessoProfiloController {
 			return null;
 	}
 
-	// alert di errore
 	private void nessunUtenteTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Nesun utente trovato");
+		alert.setTitle("Errore");
 		alert.setHeaderText(null);
 		alert.setContentText("Nessun utente trovato");
 		alert.showAndWait();
 	}
 
-	// ritorna un utente data una sottostringa del cognome
 	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
 		for (Customer c : trovati)
@@ -142,7 +136,6 @@ public class CommessoProfiloController {
 		return null;
 	}
 
-	// passa alla PublicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

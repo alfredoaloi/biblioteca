@@ -59,7 +59,7 @@
                         </HBox>
                      </top>
                      <center>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" BorderPane.alignment="CENTER">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" BorderPane.alignment="CENTER">
                           <content>
                             <AnchorPane focusTraversable="true">
                                  <children>
@@ -126,13 +126,7 @@
                                                 <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </HBox>
-                                          <Label fx:id="bookDescr" text="Descrizione" wrapText="true" VBox.vgrow="ALWAYS">
-                                             <padding>
-                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                             </padding>
-                                             <font>
-                                                <Font name="SansSerif Regular" size="14.0" />
-                                             </font></Label>
+                                          <TextArea fx:id="bookDescr" editable="false" minHeight="100.0" prefHeight="200.0" text="Percy Jackson è un ragazzino di 12 anni che vive a New York e frequenta un collegio per ragazzi difficili insieme all'amico Grover. L'unico insegnante che lo incoraggia è il professor Brunner, insegnante di latino, che si scopre in seguito essere il centauro Chirone. Durante una gita, la professoressa di matematica lo isola dalla classe, si trasforma in una Furia e tenta di ucciderlo. Percy scopre così di essere un semidio (o mezzosangue), figlio di una donna umana e di un dio greco. Il suo destino è dunque quello di vivere al Campo Mezzosangue, tra i semidei, per allenarsi a diventare un vero eroe. Prima di arrivare al campo, Percy affronta per la prima volta un mostro, il Minotauro, che rapisce sua madre Sally; Percy riesce a sconfiggerlo ottenendo parte del suo corno. Inizialmente stanziato nella casa di Ermes (messaggero degli dei) come indeterminato, Percy viene riconosciuto dal padre che si scopre essere Poseidone, il dio del mare. La sua esistenza viene però pensata come un errore, perché Poseidone, essendo uno dei Tre Pezzi Grossi (Ade, Zeus e Poseidone), ha stipulato un patto con i fratelli secondo il quale non avrebbero dovuto generare figli da un loro rapporto con una mortale, per via di una profezia che avrebbe potuto distruggere l'Olimpo. Nel frattempo sull'Olimpo si prepara una guerra: qualcuno ha infatti rubato la Folgore di Zeus e quest'ultimo ha accusato Poseidone; gli dei non possono rubare i simboli del potere fra di loro, ma un mezzosangue può farlo. Infatti, appena scopre che Poseidone ha violato il patto, Zeus accusa Percy del furto. Se la Folgore non sarà restituita al proprietario entro il solstizio d'estate, si scatenerà la Terza Guerra Mondiale. Percy, insieme all'amica Annabeth Chase e al satiro Grover Underwood, parte per un'impresa per entrare nel Regno dei Morti poiché il ragazzo è convinto che sia stato proprio Ade ad aver rubato la Folgore, in quanto una possibile guerra arricchirebbe molto il suo regno. Superando molti ostacoli, Percy riesce a giungere al cospetto dello zio per scoprire che non solo Ade è innocente, ma anche che al dio è stato rubato l'Elmo dell'Oscurità, il suo simbolo del potere. Tornato nel mondo dei vivi, grazie a un dono magico ricevuto da una ninfa inviata da suo padre, Percy capisce che il dio che ha voltato le spalle all'Olimpo è Ares, il dio della guerra, ma comprende anche che non ha agito da solo, e che è stato guidato nelle sue azioni da Crono, malvagio Titano confinato nel Tartaro. Percy vince lo scontro con Ares e riporta la folgore sull'Olimpo proprio il giorno del Solstizio d'estate, salvando il mondo. Tornato al campo, viene tradito da Luke, che tenta di avvelenarlo, ma viene salvato grazie all'intervento del centauro Chirone. Luke fugge, rimanendo una minaccia." wrapText="true" VBox.vgrow="ALWAYS" />
                                        </children>
                                     </VBox>
                                  </children></AnchorPane>

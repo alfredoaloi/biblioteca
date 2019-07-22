@@ -167,8 +167,7 @@ public class AmministrazioneController {
 		this.user = user;
 		init();
 	}
-	
-	// inizializza la scena
+
 	public void init() {
 		l1.setVisible(false);
 		t1.setVisible(false);
@@ -196,7 +195,6 @@ public class AmministrazioneController {
 		inviaButton.setDisable(true);
 	}
 
-	// aggiunge un nuovo utente
 	@FXML
 	void addUtenteReleased(MouseEvent event) {
 		op = operazione.ADD_UTENTE;
@@ -226,7 +224,6 @@ public class AmministrazioneController {
 		inviaButton.setVisible(true);
 	}
 
-	// modifica un utente
 	@FXML
 	void modUtenteReleased(MouseEvent event) {
 		op = operazione.MOD_UTENTE;
@@ -238,7 +235,7 @@ public class AmministrazioneController {
 			if (c.getSurname().toLowerCase().contains(cognome))
 				trovati.add(c);
 		if (trovati.isEmpty()) {
-			nessunUtenteTrovato();
+			alertErrore("Nessun utente trovato");
 		} else {
 			Customer customer = dialogOptionListCustomer(trovati);
 			if (customer == null)
@@ -270,7 +267,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	// elimina un utente
 	@FXML
 	void delUtenteReleased(MouseEvent event) {
 		op = operazione.DEL_UTENTE;
@@ -282,7 +278,7 @@ public class AmministrazioneController {
 			if (c.getSurname().toLowerCase().contains(cognome))
 				trovati.add(c);
 		if (trovati.isEmpty()) {
-			nessunUtenteTrovato();
+			alertErrore("Nessun utente trovato");
 		} else {
 			Customer customer = dialogOptionListCustomer(trovati);
 			if (customer == null)
@@ -296,14 +292,13 @@ public class AmministrazioneController {
 					}.getType());
 					alertErrore(reportEnvelope.getContent());
 				} else {
-					delConfermata();
+					alertSuccesso();
 					client.refreshDB();
 				}
 			}
 		}
 	}
 
-	// aggiunge un nuovo libro
 	@FXML
 	void addLibroReleased(MouseEvent event) {
 		op = operazione.ADD_LIBRO;
@@ -356,9 +351,14 @@ public class AmministrazioneController {
 		t11.setVisible(true);
 		inviaButton.setDisable(false);
 		inviaButton.setVisible(true);
+
+		Alert alert = new Alert(AlertType.WARNING);
+		alert.setTitle("Attenzione");
+		alert.setHeaderText(null);
+		alert.setContentText("Inserendo solo l'ISBN di un libro esistente, verra' aggiunta un'altra copia del libro");
+		alert.showAndWait();
 	}
 
-	// modifica un libro
 	@FXML
 	void modLibroReleased(MouseEvent event) {
 		op = operazione.MOD_LIBRO;
@@ -374,7 +374,7 @@ public class AmministrazioneController {
 			}
 		}
 		if (trovati.isEmpty()) {
-			nessunLibroTrovato();
+			alertErrore("Nessun libro trovato");
 		} else {
 			Book book = dialogOptionListBook(trovati);
 			if (book == null)
@@ -438,7 +438,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	// elimina un libro
 	@FXML
 	void delLibroReleased(MouseEvent event) {
 		op = operazione.DEL_LIBRO;
@@ -475,7 +474,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	// aggiunge un nuovo libro
 	@FXML
 	void addCommessoReleased(MouseEvent event) {
 		op = operazione.ADD_COMMESSO;
@@ -505,7 +503,6 @@ public class AmministrazioneController {
 		inviaButton.setVisible(true);
 	}
 
-	// modifica un libro
 	@FXML
 	void modCommessoReleased(MouseEvent event) {
 		op = operazione.MOD_COMMESSO;
@@ -549,7 +546,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	// elimina un libro
 	@FXML
 	void delCommessoReleased(MouseEvent event) {
 		op = operazione.DEL_COMMESSO;
@@ -561,7 +557,7 @@ public class AmministrazioneController {
 			if (c.getSurname().toLowerCase().contains(cognome) && !c.getUsername().equals(user.getUsername()))
 				trovati.add(c);
 		if (trovati.isEmpty()) {
-			nessunUtenteTrovato();
+			alertErrore("Nessun utente trovato");
 		} else {
 			User user = dialogOptionListUser(trovati);
 			if (user == null)
@@ -575,7 +571,7 @@ public class AmministrazioneController {
 					}.getType());
 					alertErrore(reportEnvelope.getContent());
 				} else {
-					delConfermata();
+					alertSuccesso();
 					client.refreshDB();
 				}
 			}
@@ -591,10 +587,24 @@ public class AmministrazioneController {
 			String cognome = t4.getText();
 			String email = t5.getText();
 
+			for (Customer c : client.getCustomersList()) {
+				if (username.equals(c.getUsername()))
+					alertErrore("E' presente un altro utente con questo username, riprova con un altro");
+			}
+			for (User u : client.getEmployeesList()) {
+				if (username.equals(u.getUsername()))
+					alertErrore("E' presente un altro utente con questo username, riprova con un altro");
+			}
+
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
-				campoNullo();
-			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
-				emailNonValida();
+				alertErrore("Uno o piu' campi sono nulli");
+			// [a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+
+			else if (!Pattern.matches(
+					"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+					email))
+				alertErrore("E-mail non valida");
+			else if (password.length() < 8 || password.length() > 16)
+				alertErrore("La password deve essere lunga almeno 8 caratteri e massimo 16");
 			else {
 				Customer customer = new Customer(username, password, nome, cognome, email, "");
 				String x = client.addCustomer(customer);
@@ -619,9 +629,11 @@ public class AmministrazioneController {
 			String email = t5.getText();
 
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
-				campoNullo();
-			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
-				emailNonValida();
+				alertErrore("Uno o piu' campi sono nulli");
+			else if (!Pattern.matches(
+					"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+					email))
+				alertErrore("Uno o piu' campi sono nulli");
 			else {
 				Customer customer = new Customer(username, password, nome, cognome, email, "");
 				String x = client.modCustomer(customer);
@@ -639,6 +651,24 @@ public class AmministrazioneController {
 		}
 
 		if (op == operazione.ADD_LIBRO) {
+			for (Category c : client.getCategoryList()) {
+				for (Book b : c.getBooks()) {
+					if (t6.getText().equals(Integer.toString(b.getISBN()))) {
+						t1.setText(b.getTitle());
+						t2.setText(b.getAuthor());
+						t3.setText(Integer.toString(b.getnPages()));
+						t4.setText(b.getPublisher());
+						t5.setText(b.getLanguage());
+						t7.setText(c.getCategoryType());
+						t8.setText(b.getDescription());
+						t9.setText(Integer.toString(b.getLendingPeriod()));
+						t10.setText(Integer.toString(b.getFineIncrement()));
+						t11.setText(b.getImage());
+						break;
+					}
+				}
+			}
+
 			String titolo = t1.getText();
 			String autore = t2.getText();
 			String pagine = t3.getText();
@@ -650,20 +680,23 @@ public class AmministrazioneController {
 			String prestabile = t9.getText();
 			String fineIncr = t10.getText();
 			String immagine = t11.getText();
+
 			boolean ok = false;
 			for (String s : client.getImageReceiver().getImageNames()) {
 				if (s.equals(immagine))
 					ok = true;
 			}
+
 			if (titolo.equals("") || autore.equals("") || pagine.equals("") || editore.equals("") || lingua.equals("")
 					|| ISBN.equals("") || categoria.equals("") || descrizione.equals("") || prestabile.equals("")
 					|| fineIncr.equals("") || immagine.equals(""))
-				campoNullo();
+				alertErrore("Uno o piu' campi sono nulli");
 			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN)
 					|| !Pattern.matches("\\d*", prestabile) || !Pattern.matches("\\d*", fineIncr))
-				noNumero();
+				alertErrore(
+						"Il/I campo/i \"Pagine\"/\"ISBN\"/\"Prestabile per (giorni)\"/\"Incremento/giorno\" devono essere numeri");
 			else if (!ok)
-				immagineNonTrovata(immagine);
+				alertErrore("Immagine " + immagine + " non trovata nel server");
 			else {
 				Category category = new Category(categoria);
 				Book[] temp = new Book[1];
@@ -679,7 +712,6 @@ public class AmministrazioneController {
 				} else {
 					libroInserito(temp[0]);
 					client.refreshDB();
-					init();
 				}
 			}
 		}
@@ -704,12 +736,13 @@ public class AmministrazioneController {
 			if (titolo.equals("") || autore.equals("") || pagine.equals("") || editore.equals("") || lingua.equals("")
 					|| ISBN.equals("") || categoria.equals("") || descrizione.equals("") || prestabile.equals("")
 					|| fineIncr.equals("") || immagine.equals(""))
-				campoNullo();
+				alertErrore("Uno o piu' campi sono nulli");
 			else if (!Pattern.matches("\\d*", pagine) || !Pattern.matches("\\d*", ISBN)
 					|| !Pattern.matches("\\d*", prestabile) || !Pattern.matches("\\d*", fineIncr))
-				noNumero();
+				alertErrore(
+						"Il/I campo/i \"Pagine\"/\"ISBN\"/\"Prestabile per (giorni)\"/\"Incremento/giorno\" devono essere numeri");
 			else if (!ok)
-				immagineNonTrovata(immagine);
+				alertErrore("Immagine " + immagine + " non trovata nel server");
 			else {
 				Category category = new Category(categoria);
 				Book[] temp = new Book[1];
@@ -737,10 +770,23 @@ public class AmministrazioneController {
 			String cognome = t4.getText();
 			String email = t5.getText();
 
+			for (Customer c : client.getCustomersList()) {
+				if (username.equals(c.getUsername()))
+					alertErrore("E' presente un altro utente con questo username, riprova con un altro");
+			}
+			for (User u : client.getEmployeesList()) {
+				if (username.equals(u.getUsername()))
+					alertErrore("E' presente un altro utente con questo username, riprova con un altro");
+			}
+
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
-				campoNullo();
-			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
-				emailNonValida();
+				alertErrore("Uno o piu' campi sono nulli");
+			else if (!Pattern.matches(
+					"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+					email))
+				alertErrore("E-mail non valida");
+			else if (password.length() < 8 || password.length() > 16)
+				alertErrore("La password deve essere lunga almeno 8 caratteri e massimo 16");
 			else {
 				User user = new User(username, password, nome, cognome, email);
 				String x = client.addUser(user);
@@ -765,9 +811,13 @@ public class AmministrazioneController {
 			String email = t5.getText();
 
 			if (username.equals("") || password.equals("") || nome.equals("") || cognome.equals("") || email.equals(""))
-				campoNullo();
-			else if (!Pattern.matches("[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+", email))
-				emailNonValida();
+				alertErrore("Uno o piu' campi sono nulli");
+			else if (!Pattern.matches(
+					"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+					email))
+				alertErrore("E-mail non valida");
+			else if (password.length() < 8 || password.length() > 16)
+				alertErrore("La password deve essere lunga almeno 8 caratteri e massimo 16");
 			else {
 				User user = new User(username, password, nome, cognome, email);
 				String x = client.modUser(user);
@@ -785,23 +835,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	private void emailNonValida() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Errore");
-		alert.setHeaderText(null);
-		alert.setContentText("E-mail non valida");
-		alert.showAndWait();
-	}
-
-	private void immagineNonTrovata(String x) {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Errore");
-		alert.setHeaderText(null);
-		alert.setContentText("Immagine " + x + " non trovata nel server");
-		alert.showAndWait();
-	}
-
-	// alert di input
 	private void alertSuccesso() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Successo");
@@ -810,7 +843,6 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// alert di errore
 	private void alertErrore(String error) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Errore");
@@ -818,28 +850,6 @@ public class AmministrazioneController {
 		alert.setContentText(error);
 		alert.showAndWait();
 	}
-
-	// alert di errore
-
-	private void campoNullo() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Errore nell'inserimento dei dati");
-		alert.setHeaderText(null);
-		alert.setContentText("Uno o più campi sono nulli");
-		alert.showAndWait();
-	}
-
-	// alert di info
-
-	private void delConfermata() {
-		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("Eliminato");
-		alert.setHeaderText(null);
-		alert.setContentText("Eliminazione avvenuta con successo");
-		alert.showAndWait();
-	}
-
-	// alert di info
 
 	private void utenteInserito(User x) {
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -849,8 +859,6 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// alert di info
-
 	private void utenteModificato(User user) {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Utente modificato");
@@ -858,8 +866,6 @@ public class AmministrazioneController {
 		alert.setContentText("L'utente " + user.toString() + " e' stato modificato con successo!");
 		alert.showAndWait();
 	}
-
-	// alert di info
 
 	private void libroInserito(Book x) {
 		Alert alert = new Alert(AlertType.INFORMATION);
@@ -869,8 +875,6 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// alert di info
-
 	private void libroModificato(Book x) {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Libro inserito");
@@ -879,7 +883,6 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// ritorna una stringa
 	private String dialogReturnsTitolo() {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Inserisci il titolo");
@@ -891,8 +894,6 @@ public class AmministrazioneController {
 		else
 			return null;
 	}
-
-	// ritorna un utente data una sottostringa del cognome
 
 	private User dialogOptionListUser(ArrayList<User> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
@@ -917,8 +918,6 @@ public class AmministrazioneController {
 		return null;
 	}
 
-	// ritorna un libro data la sottostringa del titolo
-
 	private Book dialogOptionListBook(ArrayList<Book> trovati) {
 		ArrayList<String> libri = new ArrayList<String>();
 		for (Book b : trovati)
@@ -941,10 +940,6 @@ public class AmministrazioneController {
 		return null;
 	}
 
-	// alert di errore
-
-	// alert di errore
-
 	private void nessunLibroTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Nesun libro trovato");
@@ -953,10 +948,9 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// alert di conferma
 	private boolean sicuroElimina() {
 		Alert alert = new Alert(AlertType.CONFIRMATION);
-		alert.setTitle("ATTENZIONE!");
+		alert.setTitle("Attenzione!");
 		alert.setHeaderText(null);
 		alert.setContentText("Sei sicuro di voler procedere alla eliminazione?");
 		Optional<ButtonType> result = alert.showAndWait();
@@ -964,15 +958,6 @@ public class AmministrazioneController {
 			return true;
 		else
 			return false;
-	}
-
-	// alert di errore
-	private void noNumero() {
-		Alert alert = new Alert(AlertType.ERROR);
-		alert.setTitle("Errore");
-		alert.setHeaderText(null);
-		alert.setContentText("Il campo \"Pagine\" e/o il campo \"ISBN\" devono essere dei numeri!");
-		alert.showAndWait();
 	}
 
 	@FXML
@@ -996,7 +981,6 @@ public class AmministrazioneController {
 		}
 	}
 
-	// ritorna una stringa
 	private String dialogReturnsCognome() {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Inserisci il cognome");
@@ -1009,7 +993,6 @@ public class AmministrazioneController {
 			return null;
 	}
 
-	// alert di errore
 	private void nessunUtenteTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Nesun utente trovato");
@@ -1018,7 +1001,6 @@ public class AmministrazioneController {
 		alert.showAndWait();
 	}
 
-	// ritorna un utente data una sottostringa del cognome
 	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
 		for (Customer c : trovati)
@@ -1042,19 +1024,16 @@ public class AmministrazioneController {
 		return null;
 	}
 
-	// passa a commessoScene
 	@FXML
 	void homePressed(ActionEvent event) {
 		main.setCommessoScene(new ArrayList<Book>(), user);
 	}
 
-	// passa a utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setCommessoProfiloScene(user);
 	}
 
-	// passa a publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

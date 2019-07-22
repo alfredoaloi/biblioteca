@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import clientBiblioteca.Book;
-import clientBiblioteca.Category;
 import clientBiblioteca.Client;
 import clientBiblioteca.Customer;
 import clientBiblioteca.LentBook;
@@ -21,6 +19,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,7 +58,7 @@ public class UtenteRegistratoLibriNoleggiatiController {
 	private TextField cercaTextField;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView cercaButton;
@@ -93,7 +92,6 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		client = m.client;
 	}
 
-	// inizializza la scena
 	public void init(Customer customer) {
 		this.customer = customer;
 		bookTitle.setText("Clicca su un libro per le informazioni");
@@ -101,7 +99,6 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		cercaTextField.setText("");
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -109,13 +106,11 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<LentBook> trovati = new ArrayList<LentBook>();
@@ -126,7 +121,6 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		stampaLibri(trovati);
 	}
 
-	// stampa i libri
 	public void stampaLibri(ArrayList<LentBook> noleggiati) {
 		tabPane.getTabs().clear();
 		if (noleggiati.size() == 0) {
@@ -163,7 +157,6 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		tabPane.getTabs().add(tab);
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(LentBook book) {
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
@@ -192,19 +185,16 @@ public class UtenteRegistratoLibriNoleggiatiController {
 		multa.setText("Mora ad oggi: " + Double.toString(book.getFine()) + " euro");
 	}
 
-	// passa alla utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setUtenteRegistratoProfiloScene(customer);
 	}
 
-	// passa alla utenteRegistratoRicercaLibriScene
 	@FXML
 	void ricercaLibriPressed(ActionEvent event) {
 		main.setUtenteRegistratoRicercaLibriScene(customer);
 	}
 
-	// passa alla publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

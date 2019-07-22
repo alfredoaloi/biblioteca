@@ -242,7 +242,7 @@
                                                             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                                          </HBox.margin>
                                                       </Label>
-                                                      <TextArea fx:id="t8" minHeight="45.0" prefHeight="100.0" prefWidth="187.0">
+                                                      <TextArea fx:id="t8" minHeight="80.0" prefHeight="100.0" prefWidth="187.0">
                                                          <HBox.margin>
                                                             <Insets top="5.0" />
                                                          </HBox.margin>

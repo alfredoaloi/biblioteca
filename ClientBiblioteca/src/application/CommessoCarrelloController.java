@@ -28,6 +28,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -86,7 +87,7 @@ public class CommessoCarrelloController {
 	private TextField cercaTextField;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView cercaButton;
@@ -117,7 +118,6 @@ public class CommessoCarrelloController {
 		this.gson = new GsonBuilder().create();
 	}
 
-	// inizializza la scena
 	public void init(ArrayList<Book> carrello, User user) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		this.carrello = carrello;
@@ -128,7 +128,6 @@ public class CommessoCarrelloController {
 		this.user = user;
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -136,13 +135,11 @@ public class CommessoCarrelloController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<Book> trovati = new ArrayList<Book>();
@@ -153,7 +150,6 @@ public class CommessoCarrelloController {
 		stampaLibri(trovati);
 	}
 
-	// stampa i libri nel carrello
 	public void stampaLibri(ArrayList<Book> carrello) {
 		tabPane.getTabs().clear();
 		if (carrello.isEmpty()) {
@@ -191,7 +187,6 @@ public class CommessoCarrelloController {
 		tabPane.getTabs().add(tab);
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		activeBook = book;
 		bookTitle.setText(book.getTitle());
@@ -209,7 +204,6 @@ public class CommessoCarrelloController {
 		removeCartButton.setDisable(false);
 	}
 
-	// mette il libro selezionato nel carrello (ArrayList<Book>)
 	@FXML
 	void removeCartReleased(MouseEvent event) {
 		activeBook.setnBooks(activeBook.getnBooks() + 1);
@@ -222,7 +216,6 @@ public class CommessoCarrelloController {
 		stampaLibri(carrello);
 	}
 
-	// stampa il carrello
 	@FXML
 	void acquistaReleased(MouseEvent event) {
 		if (carrello.isEmpty()) {
@@ -262,7 +255,6 @@ public class CommessoCarrelloController {
 		}
 	}
 
-	// alert di input
 	private void alertSuccesso() {
 		Alert alert = new Alert(AlertType.INFORMATION);
 		alert.setTitle("Successo");
@@ -271,7 +263,6 @@ public class CommessoCarrelloController {
 		alert.showAndWait();
 	}
 
-	// alert di errore
 	private void alertErrore(String error) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Errore");
@@ -280,7 +271,6 @@ public class CommessoCarrelloController {
 		alert.showAndWait();
 	}
 
-	// ritorna una stringa
 	private String dialogReturnsCognome() {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Inserisci il cognome");
@@ -293,7 +283,6 @@ public class CommessoCarrelloController {
 			return null;
 	}
 
-	// alert di errore
 	private void nessunUtenteTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Nesun utente trovato");
@@ -302,7 +291,6 @@ public class CommessoCarrelloController {
 		alert.showAndWait();
 	}
 
-	// ritorna un utente data una sottostringa del cognome
 	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
 		for (Customer c : trovati)
@@ -326,13 +314,11 @@ public class CommessoCarrelloController {
 		return null;
 	}
 
-	// passa a CommessoScene
 	@FXML
 	void aggiungiAltriReleased(MouseEvent event) {
 		main.setCommessoScene(carrello, user);
 	}
 
-	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
 		String cognome = dialogReturnsCognome();
@@ -354,19 +340,16 @@ public class CommessoCarrelloController {
 		}
 	}
 
-	// passa a amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
 		main.setAmministrazioneScene(user);
 	}
 
-	// passa a commessoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setCommessoProfiloScene(user);
 	}
 
-	// passa a publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

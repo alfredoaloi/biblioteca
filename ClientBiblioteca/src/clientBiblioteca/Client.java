@@ -10,8 +10,6 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import imageReceiver.ImageReceiver;
@@ -66,7 +64,6 @@ public class Client implements Runnable {
 			if (envelope1.getObject().equals("BOOK_LIST")) {
 				String[] cat = envelope1.getContent();
 				for (String c : cat) {
-					System.out.println(c);
 					categoryList.add(gson.fromJson(c, Category.class));
 				}
 			}
@@ -75,43 +72,6 @@ public class Client implements Runnable {
 				imageReceiver.receiveImagesFromServer(im);
 			}
 
-			Envelope<AccessCredentials> envelope3 = new Envelope<AccessCredentials>();
-			envelope3.setObject("ACCESS_CREDENTIALS");
-			envelope3.setContent(new AccessCredentials("franc1", "bellecose"));
-			out.append(gson.toJson(envelope3) + "\n");
-			out.flush();
-
-			String input = in.readLine();
-			JsonObject jsonObject = new JsonParser().parse(input).getAsJsonObject();
-
-			if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
-				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
-				}.getType());
-				System.out.println(reportEnvelope.getContent());
-			} else {
-				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
-				}.getType());
-				Customer c = gson.fromJson(userCredentialsEnvelope.getContent(), Customer.class);
-				System.out.println(c.getUsername());
-			}
-			envelope3 = new Envelope<AccessCredentials>();
-			envelope3.setObject("ACCESS_CREDENTIALS");
-			envelope3.setContent(new AccessCredentials("aaaaa", "aaaaaa"));
-			out.append(gson.toJson(envelope3) + "\n");
-			out.flush();
-
-			input = in.readLine();
-			jsonObject = new JsonParser().parse(input).getAsJsonObject();
-
-			if (jsonObject.get("object").toString().equals("\"FAILURE\"")) {
-				Envelope<String> reportEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
-				}.getType());
-				System.out.println(reportEnvelope.getContent());
-			} else {
-				Envelope<String> userCredentialsEnvelope = gson.fromJson(input, new TypeToken<Envelope<String>>() {
-				}.getType());
-				System.out.println(userCredentialsEnvelope.getContent());
-			}
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -141,13 +101,11 @@ public class Client implements Runnable {
 		ArrayList<LentBook> noleggiati = new ArrayList<LentBook>();
 
 		Envelope<String> envelope = new Envelope<String>("GET_CUSTOMER_LENT_BOOKS", username);
-		System.out.println(username);
 		out.append(gson.toJson(envelope) + "\n");
 		out.flush();
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -155,7 +113,6 @@ public class Client implements Runnable {
 		}.getType());
 
 		for (String s : array.getContent()) {
-			System.out.println(s);
 			noleggiati.add(gson.fromJson(s, LentBook.class));
 		}
 
@@ -171,7 +128,6 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -179,13 +135,12 @@ public class Client implements Runnable {
 		}.getType());
 
 		for (String s : array.getContent()) {
-			System.out.println(s);
 			customers.add(gson.fromJson(s, Customer.class));
 		}
 
 		return customers;
 	}
-	
+
 	public ArrayList<User> getEmployeesList() {
 		ArrayList<User> user = new ArrayList<User>();
 
@@ -195,7 +150,6 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -203,7 +157,6 @@ public class Client implements Runnable {
 		}.getType());
 
 		for (String s : array.getContent()) {
-			System.out.println(s);
 			user.add(gson.fromJson(s, User.class));
 		}
 
@@ -221,7 +174,6 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -247,7 +199,6 @@ public class Client implements Runnable {
 			if (envelope1.getObject().equals("BOOK_LIST")) {
 				String[] cat = envelope1.getContent();
 				for (String c : cat) {
-					System.out.println(c);
 					categoryList.add(gson.fromJson(c, Category.class));
 				}
 			}
@@ -269,7 +220,6 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -288,14 +238,13 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String delUser(String username) {
 		Envelope<String> envelope = new Envelope<String>("DELETE_EMPLOYEE", username);
 		out.append(gson.toJson(envelope) + "\n");
@@ -303,7 +252,6 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -320,14 +268,13 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String addCustomer(Customer customer) {
 		Envelope<Customer> envelope = new Envelope<Customer>("NEW_CUSTOMER", customer);
 		out.append(gson.toJson(envelope) + "\n");
@@ -335,14 +282,13 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String modCustomer(Customer customer) {
 		Envelope<Customer> envelope = new Envelope<Customer>("UPDATE_CUSTOMER", customer);
 		out.append(gson.toJson(envelope) + "\n");
@@ -350,14 +296,13 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String addCategory(Category category) {
 		Category[] temp = new Category[1];
 		temp[0] = category;
@@ -367,14 +312,13 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String modCategory(Category category) {
 		Category[] temp = new Category[1];
 		temp[0] = category;
@@ -384,30 +328,27 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String addUser(User user) {
 		Envelope<User> envelope = new Envelope<User>("NEW_EMPLOYEE", user);
-		System.out.println(gson.toJson(envelope));
 		out.append(gson.toJson(envelope) + "\n");
 		out.flush();
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 	public String modUser(User user) {
 		Envelope<User> envelope = new Envelope<User>("UPDATE_EMPLOYEE", user);
 		out.append(gson.toJson(envelope) + "\n");
@@ -415,12 +356,11 @@ public class Client implements Runnable {
 		String input = "";
 		try {
 			input = in.readLine();
-			System.out.println(input);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return input;
 	}
-	
+
 }

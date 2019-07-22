@@ -16,6 +16,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -59,7 +60,7 @@ public class UtenteRegistratoRicercaLibriController {
 	private TextField cercaTextField;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView cercaButton;
@@ -88,7 +89,6 @@ public class UtenteRegistratoRicercaLibriController {
 		client = m.client;
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -96,13 +96,11 @@ public class UtenteRegistratoRicercaLibriController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<Category> categorie = client.getCategoryList();
@@ -128,7 +126,6 @@ public class UtenteRegistratoRicercaLibriController {
 		stampaCategorie(trovati);
 	}
 
-	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
 		bookTitle.setText("Clicca su un libro per vederne le informazioni");
@@ -167,7 +164,6 @@ public class UtenteRegistratoRicercaLibriController {
 			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
@@ -183,7 +179,6 @@ public class UtenteRegistratoRicercaLibriController {
 		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
-	// inizializza la scena
 	public void init(Customer c) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
@@ -191,19 +186,16 @@ public class UtenteRegistratoRicercaLibriController {
 		customer = c;
 	}
 
-	// passa alla utenteRegistratoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setUtenteRegistratoProfiloScene(customer);
 	}
 
-	// passa alla utenteRegistratoLibriNoleggiatiScene
 	@FXML
 	void libriNoleggiatiPressed(ActionEvent event) {
 		main.setUtenteRegistratoLibriNoleggiatiScene(customer);
 	}
 
-	// passa alla publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

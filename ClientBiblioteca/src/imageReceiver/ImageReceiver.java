@@ -13,42 +13,41 @@ import java.nio.ByteBuffer;
 import javax.imageio.ImageIO;
 
 public class ImageReceiver {
-	
+
 	private String imageFolderPath;
 	private Socket socket;
-	
+
 	public ImageReceiver(String imageFolderPath, Socket socket) {
 		this.imageFolderPath = imageFolderPath;
 		this.socket = socket;
 	}
-	
-	public void receiveImagesFromServer(String[] im) throws IOException{
+
+	public void receiveImagesFromServer(String[] im) throws IOException {
 		InputStream inputStream = socket.getInputStream();
 		PrintWriter pw = new PrintWriter(new BufferedOutputStream(socket.getOutputStream()));
-		
-		for(String string : im) {
+
+		for (String string : im) {
 			byte[] sizeAr = new byte[4];
-			
-	        inputStream.read(sizeAr);
-	        int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
-	
-	        byte[] imageAr = new byte[size];
-	        inputStream.read(imageAr);
-	        
-	        System.out.println(size);
-	
-	        BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
-	        ImageIO.write(image, "jpg", new File(imageFolderPath + File.separator + string));
+
+			inputStream.read(sizeAr);
+			int size = ByteBuffer.wrap(sizeAr).asIntBuffer().get();
+			if (size > 0) {
+				byte[] imageAr = new byte[size];
+				inputStream.read(imageAr);
+
+				BufferedImage image = ImageIO.read(new ByteArrayInputStream(imageAr));
+				ImageIO.write(image, "jpg", new File(imageFolderPath + File.separator + string));
+			}
 		}
-		
+
 		pw.append("ack" + "\n");
 		pw.flush();
 	}
-	
+
 	public void clearImageFolder() {
 		File imageFolder = new File(imageFolderPath);
 		File[] imageFolderFileNames = imageFolder.listFiles();
-		for(File image : imageFolderFileNames)
+		for (File image : imageFolderFileNames)
 			image.delete();
 	}
 
@@ -57,5 +56,5 @@ public class ImageReceiver {
 		String[] imageFolderFileNames = imageFolder.list();
 		return imageFolderFileNames;
 	}
-	
+
 }

@@ -32,6 +32,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -42,11 +43,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 import javafx.util.Pair;
-
-// button color = #077807
-
-// customer account = franc1 - bellecose
-// employee account = alcalc - bellissimecose
 
 public class PublicController {
 
@@ -62,7 +58,7 @@ public class PublicController {
 	private TextField cercaTextField;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView loginButton;
@@ -107,7 +103,6 @@ public class PublicController {
 		this.gson = new GsonBuilder().create();
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -115,13 +110,11 @@ public class PublicController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// premuto il bottone di Login
 	@FXML
 	void loginButtonReleased(MouseEvent event) {
 
@@ -147,7 +140,6 @@ public class PublicController {
 		}
 	}
 
-	// alert di errore
 	private void alertErrore(String error) {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Errore");
@@ -156,7 +148,6 @@ public class PublicController {
 		alert.showAndWait();
 	}
 
-	// interfaccia di login, restituisce username e password (anche nulli)
 	private Pair<String, String> showLogin() {
 		Dialog<Pair<String, String>> dialog = new Dialog<Pair<String, String>>();
 		dialog.setTitle("Login");
@@ -213,7 +204,6 @@ public class PublicController {
 			return null;
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<Category> categorie = client.getCategoryList();
@@ -239,7 +229,6 @@ public class PublicController {
 		stampaCategorie(trovati);
 	}
 
-	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
 		bookTitle.setText("Clicca su un libro per vederne le informazioni");
@@ -278,7 +267,6 @@ public class PublicController {
 			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		bookTitle.setText(book.getTitle());
 		File file = new File("images" + File.separator + book.getImage());
@@ -294,7 +282,6 @@ public class PublicController {
 		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
-	// inizializza la scena
 	public void init() {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		client.refreshDB();

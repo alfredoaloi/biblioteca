@@ -21,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Alert.AlertType;
@@ -74,7 +75,7 @@ public class CommessoController {
 	private ImageView addCartButton;
 
 	@FXML
-	private Label bookDescr;
+	private TextArea bookDescr;
 
 	@FXML
 	private ImageView cercaButton;
@@ -108,7 +109,6 @@ public class CommessoController {
 		client = m.client;
 	}
 
-	// inizializza la scena
 	public void init(ArrayList<Book> carrello, User user) {
 		bookTitle.setText("Clicca su un libro per le informazioni");
 		stampaCategorie(client.getCategoryList());
@@ -119,7 +119,6 @@ public class CommessoController {
 		this.user = user;
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaTextFieldKeyPressed(KeyEvent event) {
 		if (!event.getCode().equals(KeyCode.ENTER))
@@ -127,13 +126,11 @@ public class CommessoController {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// richiama cercaLibro()
 	@FXML
 	void cercaButtonReleased(MouseEvent event) {
 		cercaLibro(cercaTextField.getText());
 	}
 
-	// cerca dei libri e li stampa
 	public void cercaLibro(String nome) {
 		nome = nome.toLowerCase();
 		ArrayList<Category> categorie = client.getCategoryList();
@@ -159,7 +156,6 @@ public class CommessoController {
 		stampaCategorie(trovati);
 	}
 
-	// stampa i libri, per categoria, dato un ArrayList<Category>
 	public void stampaCategorie(ArrayList<Category> categorie) {
 		tabPane.getTabs().clear();
 		bookTitle.setText("Clicca su un libro per vederne le informazioni");
@@ -198,7 +194,6 @@ public class CommessoController {
 			bookTitle.setText("Nessun libro corrisponde ai parametri di ricerca");
 	}
 
-	// stampa le info relative ad un libro cliccato
 	public void vediInfo(Book book) {
 		activeBook = book;
 		bookTitle.setText(book.getTitle());
@@ -217,7 +212,6 @@ public class CommessoController {
 		fineIncrement.setText("Penale di " + book.getFineIncrement() + " euro/giorno");
 	}
 
-	// mette il libro selezionato nel carrello (ArrayList<Book>)
 	@FXML
 	void addCartReleased(MouseEvent event) {
 		if (activeBook.getnBooks() > 0) {
@@ -238,13 +232,11 @@ public class CommessoController {
 		vediInfo(activeBook);
 	}
 
-	// passa a commessoCarrelloScene
 	@FXML
 	void cartReleased(MouseEvent event) {
 		main.setCommessoCarrelloScene(carrello, user);
 	}
 
-	// passa alla restituisciScene
 	@FXML
 	void restituisciPressed(ActionEvent event) {
 		String cognome = dialogReturnsCognome();
@@ -260,13 +252,12 @@ public class CommessoController {
 			return;
 		} else {
 			Customer customer = dialogOptionListCustomer(trovati);
-			if (customer == null) 
+			if (customer == null)
 				return;
 			main.setRestituisciScene(user, customer);
 		}
 	}
 
-	// ritorna una stringa
 	private String dialogReturnsCognome() {
 		TextInputDialog dialog = new TextInputDialog();
 		dialog.setTitle("Inserisci il cognome");
@@ -279,7 +270,6 @@ public class CommessoController {
 			return null;
 	}
 
-	// alert di errore
 	private void nessunUtenteTrovato() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("Nesun utente trovato");
@@ -288,7 +278,6 @@ public class CommessoController {
 		alert.showAndWait();
 	}
 
-	// ritorna un utente data una sottostringa del cognome
 	private Customer dialogOptionListCustomer(ArrayList<Customer> trovati) {
 		ArrayList<String> utenti = new ArrayList<String>();
 		for (Customer c : trovati)
@@ -312,19 +301,16 @@ public class CommessoController {
 		return null;
 	}
 
-	// passa a amministrazioneScene
 	@FXML
 	void amministrazionePressed(ActionEvent event) {
 		main.setAmministrazioneScene(user);
 	}
 
-	// passa a commessoProfiloScene
 	@FXML
 	void profiloPressed(ActionEvent event) {
 		main.setCommessoProfiloScene(user);
 	}
 
-	// passa a publicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

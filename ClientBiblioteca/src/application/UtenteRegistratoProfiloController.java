@@ -1,6 +1,5 @@
 package application;
 
-import clientBiblioteca.Client;
 import clientBiblioteca.Customer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -32,16 +31,12 @@ public class UtenteRegistratoProfiloController {
 	@FXML
 	private MenuItem ricercaLibriMenuItem;
 
-	private Client client;
-
 	private Customer customer;
 
 	public void setMain(Main m) {
 		main = m;
-		client = m.client;
 	}
 
-	// inizializza la scena
 	public void init(Customer c) {
 		customer = c;
 		usernameLabel.setText("Username:	" + c.getUsername());
@@ -50,19 +45,16 @@ public class UtenteRegistratoProfiloController {
 		emailLabel.setText("E-mail:		" + c.getE_mail());
 	}
 
-	// passa alla UtenteRegistratoLibriNoleggiariScene
 	@FXML
 	void libriNoleggiatiPressed(ActionEvent event) {
 		main.setUtenteRegistratoLibriNoleggiatiScene(customer);
 	}
 
-	// passa alla UtenteRegistratoRicercaLibriScene
 	@FXML
 	void ricercaLibriPressed(ActionEvent event) {
 		main.setUtenteRegistratoRicercaLibriScene(customer);
 	}
 
-	// passa alla PublicScene
 	@FXML
 	void esciPressed(ActionEvent event) {
 		main.setPublicScene();

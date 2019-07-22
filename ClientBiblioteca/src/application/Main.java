@@ -44,7 +44,6 @@ public class Main extends Application {
 	}
 
 	public void setUtenteRegistratoLibriNoleggiatiScene(Customer customer) {
-		System.out.println(customer.getUsername());
 		utenteRegistratoLibriNoleggiatiController.init(customer);
 		stage.setScene(utenteRegistratoLibriNoleggiatiScene);
 	}
